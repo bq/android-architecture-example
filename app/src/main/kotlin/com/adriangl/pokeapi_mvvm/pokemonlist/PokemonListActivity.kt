@@ -8,7 +8,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.adriangl.pokeapi_mvvm.R
-import com.adriangl.pokeapi_mvvm.di.viewModel
+import com.adriangl.pokeapi_mvvm.utils.injection.viewModel
 import com.mini.android.toggleViewsVisibility
 import kotlinx.android.synthetic.main.pokemonlist_activity.*
 import mini.Resource

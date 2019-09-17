@@ -1,4 +1,4 @@
-package com.adriangl.pokeapi_mvvm.di
+package com.adriangl.pokeapi_mvvm.utils.injection
 
 import androidx.annotation.MainThread
 import androidx.fragment.app.Fragment
@@ -13,6 +13,10 @@ import org.kodein.di.KodeinAware
 import org.kodein.di.bindings.NoArgSimpleBindingKodein
 import org.kodein.di.direct
 import org.kodein.di.generic.*
+
+/**
+ * Work based on: https://proandroiddev.com/android-viewmodel-dependency-injection-with-kodein-249f80f083c9
+ */
 
 /**
  * Binds a store in a Kodein module, asumming that it's a singleton dependency.

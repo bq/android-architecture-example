@@ -1,6 +1,11 @@
-package com.adriangl.pokeapi_mvvm
+package com.adriangl.pokeapi_mvvm.utils.mini
 
-import mini.*
+import mini.Resource
+import mini.allSuccesful
+import mini.anyFailure
+import mini.anyLoading
+
+fun <T> Iterable<Resource<T>>.anyEmpty(): Boolean = this.any { it.isEmpty }
 
 fun <T> Iterable<Resource<T>>.onAllSuccessful(fn: () -> Unit): Iterable<Resource<T>> {
     if (this.allSuccesful()) fn()
@@ -17,16 +22,7 @@ fun <T> Iterable<Resource<T>>.onAnyLoading(fn: () -> Unit): Iterable<Resource<T>
     return this
 }
 
-fun <T> Iterable<Resource<T>>.anyEmpty(): Boolean = this.any { it.isEmpty }
-
-fun Iterable<Task>.anyIdle(): Boolean = this.anyEmpty()
-
 fun <T> Iterable<Resource<T>>.onAnyEmpty(fn: () -> Unit): Iterable<Resource<T>> {
     if (this.anyEmpty()) fn()
-    return this
-}
-
-fun Iterable<Task>.onAnyIdle(fn: () -> Unit): Iterable<Task> {
-    if (this.anyLoading()) fn()
     return this
 }

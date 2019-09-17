@@ -1,6 +1,6 @@
 package com.adriangl.pokeapi_mvvm.pokemon
 
-import com.adriangl.pokeapi_mvvm.di.bindStore
+import com.adriangl.pokeapi_mvvm.utils.injection.bindStore
 import com.adriangl.pokeapi_mvvm.network.Pokemon
 import com.adriangl.pokeapi_mvvm.pokemonlist.FilterPokemonListAction
 import com.adriangl.pokeapi_mvvm.pokemonlist.GetPokemonDetailsListAction

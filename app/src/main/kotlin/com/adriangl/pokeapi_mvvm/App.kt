@@ -4,7 +4,7 @@ import android.app.Application
 import android.util.Log
 import androidx.annotation.RestrictTo
 import androidx.lifecycle.ViewModelProvider
-import com.adriangl.pokeapi_mvvm.di.KodeinViewModelFactory
+import com.adriangl.pokeapi_mvvm.utils.injection.KodeinViewModelFactory
 import com.adriangl.pokeapi_mvvm.di.networkModule
 import com.adriangl.pokeapi_mvvm.di.storeModule
 import com.adriangl.pokeapi_mvvm.di.utilsModule
@@ -97,5 +97,9 @@ val appModule = Kodein.Module("app", true) {
     bind<Application>() with singleton { app }
     bind<Dispatcher>() with singleton { MiniGen.newDispatcher() }
 
-    bind<ViewModelProvider.Factory>() with singleton { KodeinViewModelFactory(kodein.direct) }
+    bind<ViewModelProvider.Factory>() with singleton {
+        KodeinViewModelFactory(
+            kodein.direct
+        )
+    }
 }

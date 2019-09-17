@@ -4,7 +4,7 @@ import android.content.Intent
 import android.view.View
 import com.adriangl.pokeapi_mvvm.R
 import com.adriangl.pokeapi_mvvm.app
-import com.adriangl.pokeapi_mvvm.di.bindViewModel
+import com.adriangl.pokeapi_mvvm.utils.injection.bindViewModel
 import com.adriangl.pokeapi_mvvm.utils.test.testActivity
 import com.adriangl.pokeapi_mvvm.utils.test.testDispatcher
 import com.agoda.kakao.common.views.KView
