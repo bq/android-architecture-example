@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="12dp"
+    android:foreground="?selectableItemBackground">
+
+    <ImageView
+        android:id="@+id/pokemon_sprite"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:scaleType="fitCenter"
+        tools:srcCompat="@tools:sample/avatars[12]" />
+
+    <TextView
+        android:id="@+id/pokemon_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/pokemon_sprite"
+        app:layout_constraintStart_toEndOf="@+id/pokemon_sprite"
+        app:layout_constraintTop_toTopOf="@+id/pokemon_sprite"
+        tools:text="#1" />
+
+    <TextView
+        android:id="@+id/pokemon_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@+id/pokemon_number"
+        app:layout_constraintTop_toTopOf="@+id/pokemon_number"
+        android:layout_marginStart="8dp"
+        android:textSize="16sp"
+        tools:text="Pokimon" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
