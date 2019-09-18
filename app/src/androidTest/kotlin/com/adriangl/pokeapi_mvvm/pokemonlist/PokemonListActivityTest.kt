@@ -2,6 +2,7 @@ package com.adriangl.pokeapi_mvvm.pokemonlist
 
 import android.content.Intent
 import android.view.View
+import androidx.lifecycle.ViewModel
 import com.adriangl.pokeapi_mvvm.R
 import com.adriangl.pokeapi_mvvm.app
 import com.adriangl.pokeapi_mvvm.utils.injection.bindViewModel
@@ -20,9 +21,7 @@ import org.hamcrest.Matcher
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.kodein.di.Kodein
 import org.kodein.di.generic.bind
-import org.kodein.di.generic.instance
 import org.kodein.di.generic.singleton
 
 class PokemonListScreen : Screen<PokemonListScreen>() {
@@ -55,6 +54,9 @@ class PokemonListActivityTest {
 
     @Test
     fun validate_list_size() {
+        val viewModel = PokemonListViewModel(app)
+        injectTestDependencies(viewModel)
+
         val itemList = listOf(
             PokemonListItem(
                 "Agumon",
@@ -63,19 +65,13 @@ class PokemonListActivityTest {
             )
         )
 
-        reinitInjection {
-            bindViewModel {
-                // We have to use postValue instead of setValue because we can't set a value when there's
-                // no available observers
-                PokemonListViewModel(instance()).apply {
-                    getPokemonListLiveData().postValue(
-                        PokemonListViewData(
-                            Resource.success(itemList)
-                        )
-                    )
-                }
-            }
-        }
+        // We have to use postValue instead of setValue because we can't set a value when there's
+        // no available observers
+        viewModel.getPokemonListLiveData().postValue(
+            PokemonListViewData(
+                Resource.success(itemList)
+            )
+        )
 
         testActivity.launchActivity(Intent())
 
@@ -98,6 +94,9 @@ class PokemonListActivityTest {
 
     @Test
     fun validate_list_size_2() {
+        val viewModel = PokemonListViewModel(app)
+        injectTestDependencies(viewModel)
+
         val itemList = listOf(
             PokemonListItem(
                 "Jibanyan",
@@ -111,19 +110,13 @@ class PokemonListActivityTest {
             )
         )
 
-        reinitInjection {
-            bindViewModel {
-                PokemonListViewModel(instance()).apply {
-                    // We have to use postValue instead of setValue because we can't set a value when there's
-                    // no available observers
-                    getPokemonListLiveData().postValue(
-                        PokemonListViewData(
-                            Resource.success(itemList)
-                        )
-                    )
-                }
-            }
-        }
+        // We have to use postValue instead of setValue because we can't set a value when there's
+        // no available observers
+        viewModel.getPokemonListLiveData().postValue(
+            PokemonListViewData(
+                Resource.success(itemList)
+            )
+        )
 
         testActivity.launchActivity(Intent())
 
@@ -150,10 +143,10 @@ class PokemonListActivityTest {
         }
     }
 
-    private inline fun reinitInjection(crossinline init: Kodein.Builder.() -> Unit) {
+    private inline fun <reified T : ViewModel> injectTestDependencies(viewModel: T) {
         app.setTestModule {
             bind<Dispatcher>() with singleton { testDispatcher }
-            init()
+            bindViewModel { viewModel }
         }
 
         app.initializeInjection()
