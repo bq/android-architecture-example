@@ -10,6 +10,7 @@ import mini.Store
 import org.kodein.di.DKodein
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
+import org.kodein.di.bindings.NoArgBindingKodein
 import org.kodein.di.bindings.NoArgSimpleBindingKodein
 import org.kodein.di.direct
 import org.kodein.di.generic.*
@@ -19,7 +20,7 @@ import org.kodein.di.generic.*
  */
 
 /**
- * Binds a store in a Kodein module, asumming that it's a singleton dependency.
+ * Binds a store in a Kodein module, assuming that it's a singleton dependency.
  */
 inline fun <reified T : Store<*>> Kodein.Builder.bindStore(noinline creator: NoArgSimpleBindingKodein<*>.() -> T) {
     bind<T>() with singleton(creator = creator)
@@ -27,10 +28,10 @@ inline fun <reified T : Store<*>> Kodein.Builder.bindStore(noinline creator: NoA
 }
 
 /**
- * Binds a ViewModel to a Kotlin module.
+ * Binds a ViewModel to a Kotlin module, assuming that it's a provided dependency.
  */
-inline fun <reified T : ViewModel> Kodein.Builder.bindViewModel(overrides: Boolean? = null): Kodein.Builder.TypeBinder<T> {
-    return bind<T>(T::class.java.simpleName, overrides)
+inline fun <reified T : ViewModel> Kodein.Builder.bindViewModel(overrides: Boolean? = null, noinline creator: NoArgBindingKodein<*>.() -> T) {
+    bind<T>(T::class.java.simpleName, overrides) with provider(creator)
 }
 
 /**

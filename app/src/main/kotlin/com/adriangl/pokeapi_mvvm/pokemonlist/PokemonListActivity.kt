@@ -11,7 +11,6 @@ import com.adriangl.pokeapi_mvvm.R
 import com.adriangl.pokeapi_mvvm.utils.injection.viewModel
 import com.mini.android.toggleViewsVisibility
 import kotlinx.android.synthetic.main.pokemonlist_activity.*
-import mini.Resource
 import mini.onSuccess
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -21,8 +20,8 @@ class PokemonListActivity : AppCompatActivity(), KodeinAware {
     override val kodein: Kodein by kodein()
 
     private val pokemonListViewModel: PokemonListViewModel by viewModel()
-    private val pokemonListLiveData: LiveData<Resource<List<PokemonListItem>>>
-        get() = pokemonListViewModel.getLiveData()
+    private val pokemonListLiveData: LiveData<PokemonListViewData>
+        get() = pokemonListViewModel.getPokemonListLiveData()
 
     private val pokemonListAdapter = PokemonListAdapter()
 
@@ -38,22 +37,18 @@ class PokemonListActivity : AppCompatActivity(), KodeinAware {
 
         search_pokemon_bar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                pokemonListViewModel.filterList(query)
+                pokemonListViewModel.filterPokemonList(query)
                 return true
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                pokemonListViewModel.filterList(newText)
+                pokemonListViewModel.filterPokemonList(newText)
                 return true
             }
 
         })
 
-        if (pokemonListLiveData.value?.isEmpty == true || pokemonListLiveData.value?.isFailure == true) {
-            pokemonListViewModel.getPokemonDetails()
-        }
-
-        pokemonListViewModel.getLiveData().observe(this, Observer { resource ->
+        pokemonListLiveData.observe(this, Observer { (resource) ->
             toggleViewsVisibility(resource, list_content, list_loading, error, View.GONE)
 
             resource

@@ -23,7 +23,6 @@ import org.junit.Test
 import org.kodein.di.Kodein
 import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
-import org.kodein.di.generic.provider
 import org.kodein.di.generic.singleton
 
 class PokemonListScreen : Screen<PokemonListScreen>() {
@@ -56,18 +55,22 @@ class PokemonListActivityTest {
 
     @Test
     fun validate_list_size() {
+        val itemList = listOf(
+            PokemonListItem(
+                "Agumon",
+                1,
+                "https://placekitten.com/256/256"
+            )
+        )
+
         reinitInjection {
-            bindViewModel<PokemonListViewModel>() with singleton {
+            bindViewModel {
+                // We have to use postValue instead of setValue because we can't set a value when there's
+                // no available observers
                 PokemonListViewModel(instance()).apply {
-                    getLiveData().postValue(
-                        Resource.success(
-                            listOf(
-                                PokemonListItem(
-                                    "Perry",
-                                    1,
-                                    "https://placekitten.com/256/256"
-                                )
-                            )
+                    getPokemonListLiveData().postValue(
+                        PokemonListViewData(
+                            Resource.success(itemList)
                         )
                     )
                 }
@@ -85,8 +88,8 @@ class PokemonListActivityTest {
 
                 childAt<PokemonListScreen.PokemonListRecyclerItem>(0) {
                     isDisplayed()
-                    name.hasText("Perry")
-                    number.hasText("1")
+                    name.hasText(itemList[0].name)
+                    number.hasText(itemList[0].number.toString())
                 }
             }
 
@@ -95,25 +98,27 @@ class PokemonListActivityTest {
 
     @Test
     fun validate_list_size_2() {
+        val itemList = listOf(
+            PokemonListItem(
+                "Jibanyan",
+                1,
+                "https://placekitten.com/256/256"
+            ),
+            PokemonListItem(
+                "Mocchi",
+                2,
+                "https://placekitten.com/256/256"
+            )
+        )
+
         reinitInjection {
-            bindViewModel<PokemonListViewModel>() with provider {
+            bindViewModel {
                 PokemonListViewModel(instance()).apply {
                     // We have to use postValue instead of setValue because we can't set a value when there's
                     // no available observers
-                    getLiveData().postValue(
-                        Resource.success(
-                            listOf(
-                                PokemonListItem(
-                                    "Lola",
-                                    5,
-                                    "https://placekitten.com/256/256"
-                                ),
-                                PokemonListItem(
-                                    "Perra",
-                                    2,
-                                    "https://placekitten.com/256/256"
-                                )
-                            )
+                    getPokemonListLiveData().postValue(
+                        PokemonListViewData(
+                            Resource.success(itemList)
                         )
                     )
                 }
@@ -131,14 +136,14 @@ class PokemonListActivityTest {
 
                 childAt<PokemonListScreen.PokemonListRecyclerItem>(0) {
                     isDisplayed()
-                    name.hasText("Lola")
-                    number.hasText("5")
+                    name.hasText(itemList[0].name)
+                    number.hasText(itemList[0].number.toString())
                 }
 
                 childAt<PokemonListScreen.PokemonListRecyclerItem>(1) {
                     isDisplayed()
-                    name.hasText("Perra")
-                    number.hasText("2")
+                    name.hasText(itemList[1].name)
+                    number.hasText(itemList[1].number.toString())
                 }
             }
 

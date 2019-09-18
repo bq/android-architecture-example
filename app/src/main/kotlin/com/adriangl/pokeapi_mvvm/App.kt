@@ -4,12 +4,12 @@ import android.app.Application
 import android.util.Log
 import androidx.annotation.RestrictTo
 import androidx.lifecycle.ViewModelProvider
-import com.adriangl.pokeapi_mvvm.utils.injection.KodeinViewModelFactory
 import com.adriangl.pokeapi_mvvm.di.networkModule
 import com.adriangl.pokeapi_mvvm.di.storeModule
 import com.adriangl.pokeapi_mvvm.di.utilsModule
 import com.adriangl.pokeapi_mvvm.pokemon.pokeStoreModule
 import com.adriangl.pokeapi_mvvm.pokemonlist.pokemonListViewModelModule
+import com.adriangl.pokeapi_mvvm.utils.injection.KodeinViewModelFactory
 import mini.Dispatcher
 import mini.LoggerInterceptor
 import mini.MiniGen
@@ -51,9 +51,11 @@ class App : Application(), KodeinAware {
         if (this::storeSubscriptions.isInitialized) {
             storeSubscriptions.close()
         }
+
         if (this::stores.isInitialized) {
             stores.forEach { it.close() }
         }
+
         kodein.clear()
 
         with(kodein) {

@@ -1,37 +1,32 @@
 package com.adriangl.pokeapi_mvvm.pokemonlist
 
 import android.app.Application
-import android.util.Log
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import com.adriangl.pokeapi_mvvm.utils.injection.bindViewModel
 import com.adriangl.pokeapi_mvvm.network.Pokemon
 import com.adriangl.pokeapi_mvvm.pokemon.PokeState
 import com.adriangl.pokeapi_mvvm.pokemon.PokeStore
+import com.adriangl.pokeapi_mvvm.utils.injection.bindViewModel
+import com.adriangl.pokeapi_mvvm.utils.mini.viewmodel.RxAndroidViewModel
 import mini.*
-import mini.rx.DefaultSubscriptionTracker
-import mini.rx.SubscriptionTracker
 import mini.rx.flowable
 import mini.rx.select
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.closestKodein
 import org.kodein.di.generic.instance
-import org.kodein.di.generic.provider
 
-class PokemonListViewModel(app: Application) : AndroidViewModel(app),
-    SubscriptionTracker by DefaultSubscriptionTracker(), KodeinAware {
+class PokemonListViewModel(app: Application) : RxAndroidViewModel(app), KodeinAware {
 
     override val kodein by closestKodein()
 
     private val pokeStore: PokeStore by instance()
     private val dispatcher: Dispatcher by instance()
 
-    private val pokemonListLiveData = MutableLiveData<Resource<List<PokemonListItem>>>()
+    private val pokemonListLiveData = MutableLiveData<PokemonListViewData>()
 
     init {
         pokeStore.flowable()
-            .select { it.toViewData() }
+            .select { mapToViewData(it) }
             .subscribe {
                 pokemonListLiveData.postValue(it)
             }
@@ -42,18 +37,26 @@ class PokemonListViewModel(app: Application) : AndroidViewModel(app),
         }
     }
 
-    override fun onCleared() {
-        clearSubscriptions()
+    private fun mapToViewData(pokeState: PokeState): PokemonListViewData {
+        var resource: Resource<List<PokemonListItem>> = Resource.empty()
+        pokeState.pokemonListTask
+            .onLoading { resource = Resource.loading() }
+            .onSuccess {
+                resource =
+                    Resource.success(pokeState.filteredPokemonList!!.map { PokemonListItem.from(it) })
+            }
+            .onFailure { resource = Resource.failure() }
+
+        return PokemonListViewData(resource)
     }
 
-    fun getLiveData() = pokemonListLiveData
+    fun getPokemonListLiveData() = pokemonListLiveData
 
     fun getPokemonDetails() {
-        Log.e("AAA", "Dispatcher instance in ViewModel: dispatcher")
         dispatcher.dispatch(GetPokemonDetailsListAction())
     }
 
-    fun filterList(query: String?) {
+    fun filterPokemonList(query: String?) {
         dispatcher.dispatch(FilterPokemonListAction(query))
     }
 }
@@ -66,18 +69,8 @@ data class PokemonListItem(val name: String, val number: Int, val sprite: String
     }
 }
 
-private fun PokeState.toViewData(): Resource<List<PokemonListItem>> {
-    var resource: Resource<List<PokemonListItem>> = Resource.empty()
-    pokemonListTask
-        .onLoading { resource = Resource.loading() }
-        .onSuccess {
-            resource = Resource.success(this.filteredPokemonList!!.map { PokemonListItem.from(it) })
-        }
-        .onFailure { resource = Resource.failure() }
-
-    return resource
-}
+data class PokemonListViewData(val pokemonListRes: Resource<List<PokemonListItem>>)
 
 val pokemonListViewModelModule = Kodein.Module("pokemonListViewModelModule", true) {
-    bindViewModel<PokemonListViewModel>() with provider { PokemonListViewModel(instance()) }
+    bindViewModel { PokemonListViewModel(instance()) }
 }
