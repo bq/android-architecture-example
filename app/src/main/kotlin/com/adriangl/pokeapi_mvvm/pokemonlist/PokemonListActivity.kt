@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.adriangl.pokeapi_mvvm.R
@@ -19,9 +18,7 @@ import org.kodein.di.android.kodein
 class PokemonListActivity : AppCompatActivity(), KodeinAware {
     override val kodein: Kodein by kodein()
 
-    private val pokemonListViewModel: PokemonListViewModel by viewModel()
-    private val pokemonListLiveData: LiveData<PokemonListViewData>
-        get() = pokemonListViewModel.getPokemonListLiveData()
+    val pokemonListViewModel: PokemonListViewModel by viewModel()
 
     private val pokemonListAdapter = PokemonListAdapter()
 
@@ -36,24 +33,24 @@ class PokemonListActivity : AppCompatActivity(), KodeinAware {
         list_recycler.adapter = pokemonListAdapter
 
         search_pokemon_bar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                pokemonListViewModel.filterPokemonList(query)
+            override fun onQueryTextSubmit(query: String): Boolean {
+                pokemonListViewModel.filterList(query)
                 return true
             }
 
-            override fun onQueryTextChange(newText: String?): Boolean {
-                pokemonListViewModel.filterPokemonList(newText)
+            override fun onQueryTextChange(newText: String): Boolean {
+                pokemonListViewModel.filterList(newText)
                 return true
             }
 
         })
 
-        pokemonListLiveData.observe(this, Observer { (resource) ->
-            toggleViewsVisibility(resource, list_content, list_loading, error, View.GONE)
+        pokemonListViewModel.pokemonListLiveData.observe(this, Observer { state ->
+            toggleViewsVisibility(state.list, list_content, list_loading, error, View.GONE)
 
-            resource
+            state.list
                 .onSuccess {
-                    pokemonListAdapter.list = it
+                    pokemonListAdapter.list = it.filter { state.filter(it) }
                 }
         })
     }

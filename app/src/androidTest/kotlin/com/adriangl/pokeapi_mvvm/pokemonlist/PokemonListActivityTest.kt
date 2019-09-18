@@ -50,7 +50,6 @@ class PokemonListActivityTest {
     @Before
     fun setup() {
         app.clearTestModule()
-    }
 
     @Test
     fun validate_list_size() {
@@ -74,6 +73,21 @@ class PokemonListActivityTest {
         )
 
         testActivity.launchActivity(Intent())
+    }
+
+    @Test
+    fun validate_list_size() {
+        val state = PokemonListViewModelState(Resource.success(
+            listOf(
+                PokemonListItem(
+                    "Perry",
+                    1,
+                    "https://placekitten.com/256/256"
+                )
+            )
+        ))
+
+        testActivity.activity.pokemonListViewModel.pokemonListLiveData.postValue(state)
 
         onScreen<PokemonListScreen> {
             loadingView.isNotDisplayed()
@@ -88,7 +102,6 @@ class PokemonListActivityTest {
                     number.hasText(itemList[0].number.toString())
                 }
             }
-
         }
     }
 
@@ -139,7 +152,6 @@ class PokemonListActivityTest {
                     number.hasText(itemList[1].number.toString())
                 }
             }
-
         }
     }
 

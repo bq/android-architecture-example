@@ -5,9 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.adriangl.pokeapi_mvvm.network.Pokemon
 import com.adriangl.pokeapi_mvvm.pokemon.PokeState
 import com.adriangl.pokeapi_mvvm.pokemon.PokeStore
-import com.adriangl.pokeapi_mvvm.pokemonlist.PokemonListViewData.Companion.mapToViewData
 import com.adriangl.pokeapi_mvvm.utils.injection.bindViewModel
-import com.adriangl.pokeapi_mvvm.utils.mini.viewmodel.RxAndroidViewModel
 import mini.*
 import mini.rx.flowable
 import mini.rx.select
@@ -28,7 +26,7 @@ class PokemonListViewModel(app: Application) : RxAndroidViewModel(app), KodeinAw
         pokeStore.flowable()
             .select { PokemonListViewData.from(it) }
             .subscribe {
-                pokemonListLiveData.postValue(it)
+                pokemonListLiveData.postValue(PokemonListViewModelState(it))
             }
             .track()
 
@@ -40,13 +38,26 @@ class PokemonListViewModel(app: Application) : RxAndroidViewModel(app), KodeinAw
     fun getPokemonListLiveData() = pokemonListLiveData
 
     fun getPokemonDetails() {
-        dispatcher.dispatch(GetPokemonDetailsListAction())
+        Log.e("AAA", "Dispatcher instance in ViewModel: dispatcher")
+        if (pokemonListLiveData.value == null ||
+            pokemonListLiveData.value!!.list.isEmpty ||
+            pokemonListLiveData.value!!.list.isFailure
+        ) {
+            dispatcher.dispatch(GetPokemonDetailsListAction())
+        }
     }
 
-    fun filterPokemonList(query: String?) {
-        dispatcher.dispatch(FilterPokemonListAction(query))
+    fun filterList(query: String) {
+        pokemonListLiveData.postValue(pokemonListLiveData.value?.copy(filter = {
+            it.name.contains(query, true)
+        }))
     }
 }
+
+data class PokemonListViewModelState(
+    val list: Resource<List<PokemonListItem>>,
+    val filter: (PokemonListItem) -> Boolean = { true }
+)
 
 data class PokemonListItem(val name: String, val number: Int, val sprite: String?) {
     companion object {
