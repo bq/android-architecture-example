@@ -4,10 +4,10 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.adriangl.pokeapi_mvvm.R
 import com.adriangl.pokeapi_mvvm.utils.injection.viewModel
+import com.adriangl.pokeapi_mvvm.utils.observe
 import com.mini.android.toggleViewsVisibility
 import kotlinx.android.synthetic.main.pokemonlist_activity.*
 import mini.onSuccess
@@ -45,13 +45,13 @@ class PokemonListActivity : AppCompatActivity(), KodeinAware {
 
         })
 
-        pokemonListViewModel.getPokemonListLiveData().observe(this, Observer { state ->
-            toggleViewsVisibility(state.pokemonListRes, list_content, list_loading, error, View.GONE)
+        pokemonListViewModel.getPokemonListLiveData().observe(this) { viewData ->
+            toggleViewsVisibility(viewData.pokemonListRes, list_content, list_loading, error, View.GONE)
 
-            state.pokemonListRes
+            viewData.pokemonListRes
                 .onSuccess { list ->
-                    pokemonListAdapter.list = list.filter { state.filter(it) }
+                    pokemonListAdapter.list = list.filter { viewData.filter(it) }
                 }
-        })
+        }
     }
 }
