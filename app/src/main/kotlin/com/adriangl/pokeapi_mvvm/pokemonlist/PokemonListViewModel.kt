@@ -2,14 +2,15 @@ package com.adriangl.pokeapi_mvvm.pokemonlist
 
 import android.app.Application
 import androidx.lifecycle.MutableLiveData
+import com.adriangl.pokeapi_mvvm.moves.MovesState
+import com.adriangl.pokeapi_mvvm.moves.MovesStore
 import com.adriangl.pokeapi_mvvm.network.Pokemon
 import com.adriangl.pokeapi_mvvm.pokemon.PokeState
 import com.adriangl.pokeapi_mvvm.pokemon.PokeStore
-import com.adriangl.pokeapi_mvvm.pokemonlist.PokemonListViewData.Companion.mapToViewData
 import com.adriangl.pokeapi_mvvm.utils.injection.bindViewModel
+import com.adriangl.pokeapi_mvvm.utils.mini.mergeStates
 import com.adriangl.pokeapi_mvvm.utils.mini.viewmodel.RxAndroidViewModel
 import mini.*
-import mini.rx.flowable
 import mini.rx.select
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -20,21 +21,26 @@ class PokemonListViewModel(app: Application) : RxAndroidViewModel(app), KodeinAw
     override val kodein by closestKodein()
 
     private val pokeStore: PokeStore by instance()
+    private val movesStore: MovesStore by instance()
     private val dispatcher: Dispatcher by instance()
 
     private val pokemonListLiveData = MutableLiveData<PokemonListViewData>()
 
     init {
-        pokeStore.flowable()
-            .select { PokemonListViewData.from(it) }
-            .subscribe {
-                pokemonListLiveData.postValue(it)
-            }
-            .track()
+        mergeStates<Task> {
+            merge(pokeStore) { pokemonListTask }
+            merge(movesStore) { movesTask }
+        }.select {
+            PokemonListViewData.from(pokeStore.state, movesStore.state)
+        }.subscribe {
+            pokemonListLiveData.postValue(it)
+        }.track()
+
 
         if (pokeStore.state.pokemonList == null) {
             getPokemonDetails()
         }
+
     }
 
     fun getPokemonListLiveData() = pokemonListLiveData
@@ -58,21 +64,25 @@ data class PokemonListItem(val name: String, val number: Int, val sprite: String
 
 data class PokemonListViewData(val pokemonListRes: Resource<List<PokemonListItem>>) {
     companion object {
-        fun from(pokeState: PokeState): PokemonListViewData {
-            var resource: Resource<List<PokemonListItem>> = Resource.empty()
-            pokeState.pokemonListTask
-                .onLoading { resource = Resource.loading() }
-                .onSuccess {
-                    resource =
-                        Resource.success(pokeState.filteredPokemonList!!.map {
-                            PokemonListItem.from(
-                                it
-                            )
-                        })
-                }
-                .onFailure { resource = Resource.failure() }
+        fun from(pokeState: PokeState, movesState: MovesState): PokemonListViewData {
+            val allTasks = listOf(movesState.movesTask, pokeState.pokemonListTask)
 
-            return PokemonListViewData(resource)
+            return when {
+                allTasks.allSuccesful() -> {
+                    pokeState.filteredPokemonList!!.map {
+                        PokemonListItem.from(
+                            it
+                        )
+                    }
+                    PokemonListViewData(Resource.success(emptyList()))
+                }
+                allTasks.anyFailure() -> {
+                    PokemonListViewData(Resource.failure())
+                }
+                else -> {
+                    PokemonListViewData(Resource.loading())
+                }
+            }
         }
     }
 }
