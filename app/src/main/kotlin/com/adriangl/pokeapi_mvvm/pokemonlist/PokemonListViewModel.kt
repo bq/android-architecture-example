@@ -1,11 +1,14 @@
 package com.adriangl.pokeapi_mvvm.pokemonlist
 
 import android.app.Application
+import androidx.annotation.VisibleForTesting
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.adriangl.pokeapi_mvvm.network.Pokemon
 import com.adriangl.pokeapi_mvvm.pokemon.PokeState
 import com.adriangl.pokeapi_mvvm.pokemon.PokeStore
 import com.adriangl.pokeapi_mvvm.utils.injection.bindViewModel
+import com.adriangl.pokeapi_mvvm.utils.mini.viewmodel.RxAndroidViewModel
 import mini.*
 import mini.rx.flowable
 import mini.rx.select
@@ -26,7 +29,7 @@ class PokemonListViewModel(app: Application) : RxAndroidViewModel(app), KodeinAw
         pokeStore.flowable()
             .select { PokemonListViewData.from(it) }
             .subscribe {
-                pokemonListLiveData.postValue(PokemonListViewModelState(it))
+                pokemonListLiveData.postValue(it)
             }
             .track()
 
@@ -35,13 +38,15 @@ class PokemonListViewModel(app: Application) : RxAndroidViewModel(app), KodeinAw
         }
     }
 
-    fun getPokemonListLiveData() = pokemonListLiveData
+    fun getPokemonListLiveData(): LiveData<PokemonListViewData> = pokemonListLiveData
+
+    @VisibleForTesting
+    fun getPokemonMutableLiveData() = pokemonListLiveData
 
     fun getPokemonDetails() {
-        Log.e("AAA", "Dispatcher instance in ViewModel: dispatcher")
         if (pokemonListLiveData.value == null ||
-            pokemonListLiveData.value!!.list.isEmpty ||
-            pokemonListLiveData.value!!.list.isFailure
+            pokemonListLiveData.value!!.pokemonListRes.isEmpty ||
+            pokemonListLiveData.value!!.pokemonListRes.isFailure
         ) {
             dispatcher.dispatch(GetPokemonDetailsListAction())
         }
@@ -54,10 +59,6 @@ class PokemonListViewModel(app: Application) : RxAndroidViewModel(app), KodeinAw
     }
 }
 
-data class PokemonListViewModelState(
-    val list: Resource<List<PokemonListItem>>,
-    val filter: (PokemonListItem) -> Boolean = { true }
-)
 
 data class PokemonListItem(val name: String, val number: Int, val sprite: String?) {
     companion object {
@@ -67,7 +68,10 @@ data class PokemonListItem(val name: String, val number: Int, val sprite: String
     }
 }
 
-data class PokemonListViewData(val pokemonListRes: Resource<List<PokemonListItem>>) {
+data class PokemonListViewData(
+    val pokemonListRes: Resource<List<PokemonListItem>>,
+    val filter: (PokemonListItem) -> Boolean = { true }
+) {
     companion object {
         fun from(pokeState: PokeState): PokemonListViewData {
             var resource: Resource<List<PokemonListItem>> = Resource.empty()

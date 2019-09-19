@@ -45,12 +45,12 @@ class PokemonListActivity : AppCompatActivity(), KodeinAware {
 
         })
 
-        pokemonListViewModel.pokemonListLiveData.observe(this, Observer { state ->
-            toggleViewsVisibility(state.list, list_content, list_loading, error, View.GONE)
+        pokemonListViewModel.getPokemonListLiveData().observe(this, Observer { state ->
+            toggleViewsVisibility(state.pokemonListRes, list_content, list_loading, error, View.GONE)
 
-            state.list
-                .onSuccess {
-                    pokemonListAdapter.list = it.filter { state.filter(it) }
+            state.pokemonListRes
+                .onSuccess { list ->
+                    pokemonListAdapter.list = list.filter { state.filter(it) }
                 }
         })
     }

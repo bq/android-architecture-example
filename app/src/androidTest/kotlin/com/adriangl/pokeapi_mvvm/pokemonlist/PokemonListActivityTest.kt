@@ -44,12 +44,14 @@ class PokemonListScreen : Screen<PokemonListScreen>() {
 }
 
 class PokemonListActivityTest {
+
     @get:Rule
     val testActivity = testActivity(clazz = PokemonListActivity::class, launchActivity = false)
 
     @Before
     fun setup() {
         app.clearTestModule()
+    }
 
     @Test
     fun validate_list_size() {
@@ -64,30 +66,13 @@ class PokemonListActivityTest {
             )
         )
 
-        // We have to use postValue instead of setValue because we can't set a value when there's
-        // no available observers
-        viewModel.getPokemonListLiveData().postValue(
+        viewModel.getPokemonMutableLiveData().postValue(
             PokemonListViewData(
                 Resource.success(itemList)
             )
         )
 
         testActivity.launchActivity(Intent())
-    }
-
-    @Test
-    fun validate_list_size() {
-        val state = PokemonListViewModelState(Resource.success(
-            listOf(
-                PokemonListItem(
-                    "Perry",
-                    1,
-                    "https://placekitten.com/256/256"
-                )
-            )
-        ))
-
-        testActivity.activity.pokemonListViewModel.pokemonListLiveData.postValue(state)
 
         onScreen<PokemonListScreen> {
             loadingView.isNotDisplayed()
@@ -125,11 +110,7 @@ class PokemonListActivityTest {
 
         // We have to use postValue instead of setValue because we can't set a value when there's
         // no available observers
-        viewModel.getPokemonListLiveData().postValue(
-            PokemonListViewData(
-                Resource.success(itemList)
-            )
-        )
+        viewModel.getPokemonMutableLiveData().postValue(PokemonListViewData(Resource.success(itemList)))
 
         testActivity.launchActivity(Intent())
 
