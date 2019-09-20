@@ -4,16 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:padding="12dp"
-    android:foreground="?selectableItemBackground">
+    android:foreground="?selectableItemBackground"
+    android:padding="12dp">
 
     <ImageView
         android:id="@+id/pokemon_sprite"
         android:layout_width="48dp"
         android:layout_height="48dp"
+        android:scaleType="fitCenter"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:scaleType="fitCenter"
         tools:srcCompat="@tools:sample/avatars[12]" />
 
     <TextView
@@ -31,10 +31,67 @@
         android:id="@+id/pokemon_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:textSize="18sp"
         app:layout_constraintStart_toEndOf="@+id/pokemon_number"
+        app:layout_constraintTop_toBottomOf="@+id/pokemon_number"
         app:layout_constraintTop_toTopOf="@+id/pokemon_number"
+        app:layout_constraintBottom_toTopOf="@+id/pokemon_move_title"
+        tools:text="Pokimon" />
+
+    <TextView
+        android:id="@+id/pokemon_move_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:textSize="16sp"
-        tools:text="Pokimon" />
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/pokemon_number"
+        app:layout_constraintTop_toBottomOf="@+id/pokemon_name"
+        app:layout_constraintBottom_toTopOf="@+id/pokemon_move_1"
+        android:text="Movements:" />
+
+    <TextView
+        android:id="@+id/pokemon_move_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:textSize="14sp"
+        app:layout_goneMarginStart="16dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        app:layout_constraintStart_toStartOf="@+id/pokemon_move_title"
+        app:layout_constraintTop_toBottomOf="@+id/pokemon_move_title"
+        app:layout_constraintBottom_toTopOf="@+id/pokemon_move_2"
+        tools:text="Tackle: Normal" />
+
+    <TextView
+        android:id="@+id/pokemon_move_2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:textSize="14sp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        app:layout_goneMarginStart="16dp"
+        app:layout_constraintStart_toStartOf="@+id/pokemon_move_title"
+        app:layout_constraintTop_toBottomOf="@+id/pokemon_move_1"
+        app:layout_constraintBottom_toTopOf="@+id/pokemon_move_3"
+        tools:text="Cut: Normal" />
+
+    <TextView
+        android:id="@+id/pokemon_move_3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:textSize="14sp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        app:layout_constraintStart_toStartOf="@+id/pokemon_move_title"
+        app:layout_constraintTop_toBottomOf="@+id/pokemon_move_2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:text="Razor-wind: Wind" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

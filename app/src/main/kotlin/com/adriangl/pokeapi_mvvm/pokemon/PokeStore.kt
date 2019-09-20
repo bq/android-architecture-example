@@ -1,10 +1,10 @@
 package com.adriangl.pokeapi_mvvm.pokemon
 
-import com.adriangl.pokeapi_mvvm.utils.injection.bindStore
 import com.adriangl.pokeapi_mvvm.network.Pokemon
 import com.adriangl.pokeapi_mvvm.pokemonlist.FilterPokemonListAction
 import com.adriangl.pokeapi_mvvm.pokemonlist.GetPokemonDetailsListAction
 import com.adriangl.pokeapi_mvvm.pokemonlist.PokemonDetailsListLoadedAction
+import com.adriangl.pokeapi_mvvm.utils.injection.bindStore
 import mini.Reducer
 import mini.Store
 import mini.Task
@@ -12,6 +12,8 @@ import org.kodein.di.Kodein
 import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
 import org.kodein.di.generic.singleton
+
+typealias Page = Int
 
 data class PokeState(
     val pokemonList: List<Pokemon>? = null,

@@ -2,8 +2,7 @@ package com.adriangl.pokeapi_mvvm.pokemonlist
 
 import android.app.Application
 import androidx.lifecycle.MutableLiveData
-import com.adriangl.pokeapi_mvvm.moves.MovesState
-import com.adriangl.pokeapi_mvvm.moves.MovesStore
+import com.adriangl.pokeapi_mvvm.moves.*
 import com.adriangl.pokeapi_mvvm.network.Pokemon
 import com.adriangl.pokeapi_mvvm.pokemon.PokeState
 import com.adriangl.pokeapi_mvvm.pokemon.PokeStore
@@ -38,15 +37,24 @@ class PokemonListViewModel(app: Application) : RxAndroidViewModel(app), KodeinAw
 
 
         if (pokeStore.state.pokemonList == null) {
-            getPokemonDetails()
+            getPokemonList()
+        } else {
+            pokeStore.state.pokemonList!!.forEach {
+                getMoves(it.moves.map { it.move.id })
+            }
         }
-
     }
 
     fun getPokemonListLiveData() = pokemonListLiveData
 
-    fun getPokemonDetails() {
+    fun getPokemonList() {
         dispatcher.dispatch(GetPokemonDetailsListAction())
+    }
+
+    fun getMoves(moves: List<MoveId>) {
+        moves.forEach {
+            dispatcher.dispatch(LoadMoveAction(it))
+        }
     }
 
     fun filterPokemonList(query: String?) {
@@ -54,10 +62,15 @@ class PokemonListViewModel(app: Application) : RxAndroidViewModel(app), KodeinAw
     }
 }
 
-data class PokemonListItem(val name: String, val number: Int, val sprite: String?) {
+data class PokemonListItem(
+    val name: String,
+    val number: Int,
+    val sprite: String?,
+    val currentMoves: List<Move>
+) {
     companion object {
-        fun from(pokemon: Pokemon): PokemonListItem {
-            return PokemonListItem(pokemon.name, pokemon.order, pokemon.sprites.frontDefault)
+        fun from(pokemon: Pokemon, moves: List<Move>): PokemonListItem {
+            return PokemonListItem(pokemon.name, pokemon.order, pokemon.sprites.frontDefault, moves)
         }
     }
 }
@@ -69,12 +82,12 @@ data class PokemonListViewData(val pokemonListRes: Resource<List<PokemonListItem
 
             return when {
                 allTasks.allSuccesful() -> {
-                    pokeState.filteredPokemonList!!.map {
-                        PokemonListItem.from(
-                            it
-                        )
+                    val pokemonWithMovements = pokeState.filteredPokemonList!!.map { pokemon ->
+                        val moveList =
+                            pokemon.moves.map { movesState.movesMap.getValue(it.move.id) }
+                        PokemonListItem.from(pokemon, moveList)
                     }
-                    PokemonListViewData(Resource.success(emptyList()))
+                    PokemonListViewData(Resource.success(pokemonWithMovements))
                 }
                 allTasks.anyFailure() -> {
                     PokemonListViewData(Resource.failure())

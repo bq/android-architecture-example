@@ -1,6 +1,7 @@
 package com.adriangl.pokeapi_mvvm.di
 
 import android.content.Context
+import com.adriangl.pokeapi_mvvm.moves.MovesApi
 import com.adriangl.pokeapi_mvvm.network.PokeApi
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
@@ -51,6 +52,12 @@ val networkModule = Kodein.Module("network") {
         val retrofit: Retrofit = instance()
 
         retrofit.create(PokeApi::class.java)
+    }
+
+    bind<MovesApi>() with singleton {
+        val retrofit: Retrofit = instance()
+
+        retrofit.create(MovesApi::class.java)
     }
 }
 

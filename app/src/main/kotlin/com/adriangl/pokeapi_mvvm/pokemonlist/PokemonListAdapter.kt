@@ -40,6 +40,9 @@ class PokemonListAdapter : RecyclerView.Adapter<PokemonListViewHolder>() {
 
             number.text = item.number.toString()
             name.text = item.name.capitalize()
+            move1.text = "${item.currentMoves[0].name}" + ":" + "${item.currentMoves[0].type.name}"
+            move2.text = "${item.currentMoves[1].name}" + ":" + "${item.currentMoves[1].type.name}"
+            move3.text = "${item.currentMoves[2].name}" + ":" + "${item.currentMoves[2].type.name}"
         }
     }
 }
@@ -49,4 +52,7 @@ class PokemonListViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     val sprite: ImageView = itemView.pokemon_sprite
     val number: TextView = itemView.pokemon_number
     val name: TextView = itemView.pokemon_name
+    val move1: TextView  = itemView.pokemon_move_1
+    val move2: TextView  = itemView.pokemon_move_2
+    val move3: TextView  = itemView.pokemon_move_3
 }
