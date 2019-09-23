@@ -1,5 +1,7 @@
 package com.adriangl.pokeapi_mvvm.moves
 
+import com.adriangl.pokeapi_mvvm.network.MoveName
+import com.adriangl.pokeapi_mvvm.network.PokemonMove
 import com.adriangl.pokeapi_mvvm.utils.extensions.replace
 import com.adriangl.pokeapi_mvvm.utils.injection.bindStore
 import mini.Reducer
@@ -11,58 +13,54 @@ import org.kodein.di.generic.instance
 import org.kodein.di.generic.singleton
 
 data class MovesState(
-    val movesMap: Map<MoveId, PokemonMove> = emptyMap(),
-    val movesTask: Task = Task.idle()
+    val movesMap: Map<MoveName, PokemonMove> = emptyMap(),
+    val movesMapTask: Map<MoveName, Task> = emptyMap()
 )
 
 class MovesStore(private val movesController: MovesController) : Store<MovesState>() {
 
     @Reducer
-    fun getMove(action: LoadMoveAction) {
-        if (state.movesTask.isLoading) return
+    fun getMove(action: LoadMovesAction) {
+        var newMovesMapTask = state.movesMapTask
+        action.moveNameList.forEach { moveName ->
+            newMovesMapTask = newMovesMapTask.replace(moveName, Task.loading())
+        }
         setState(
             state.copy(
-                movesTask = Task.loading()
+                movesMapTask = newMovesMapTask
             )
         )
-        movesController.getMove(action.moveId)
+        action.moveNameList.forEach { moveName ->
+            movesController.getMove(moveName)
+        }
     }
 
-    // I'm keen on remove remove nullable data from the state. At least from the collections.
-    // Reason1: It's a pain handle nullable stuff inside collections. It already has the meaning of "absence of value"
-    // if you the paired tasks fails.
-    //EJ 1:
-    // Get move fails
-    // movesTask[1] -> Failed
-    // movesMap[1] -> null
-
-
-    //EJ 2:
-    // Get move success and the second request fails
-    // movesTask[1] -> Failed
-    // movesMap[1] -> "My move"
-
-    //Therefore is not needed a Map<MoveId, Move?>.
     @Reducer
     fun onMovesLoadedAction(action: MoveLoadedAction) {
-        val newMovesMap = state.movesMap.replace(action.moveId, action.pokemonMove)
+        if (action.task.isSuccess) {
+            val newMovesMap = state.movesMap.replace(action.moveName, action.pokemonMove!!)
+            val mewMovesTask = state.movesMapTask.replace(action.moveName, Task.success())
 
-        setState(
-            state.copy(
-                movesMap = newMovesMap,
-                movesTask = Task.success()
+            setState(
+                state.copy(
+                    movesMap = newMovesMap,
+                    movesMapTask = mewMovesTask
+                )
             )
-        )
+        } else {
+            if (action.task.isFailure) {
+                val mewMovesTask = state.movesMapTask.replace(action.moveName, Task.failure())
+
+                setState(
+                    state.copy(
+                        movesMapTask = mewMovesTask
+                    )
+                )
+            }
+        }
+
     }
 
-    @Reducer
-    fun onMovesFailedAction(action: MoveFailedAction) {
-        setState(
-            state.copy(
-                movesTask = Task.failure()
-            )
-        )
-    }
 }
 
 val movesStoreModule = Kodein.Module("movesStore") {

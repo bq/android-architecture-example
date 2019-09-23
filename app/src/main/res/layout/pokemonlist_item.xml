@@ -45,8 +45,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:textSize="16sp"
-
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/pokemon_number"
         app:layout_constraintTop_toBottomOf="@+id/pokemon_name"
         app:layout_constraintBottom_toTopOf="@+id/pokemon_move_1"

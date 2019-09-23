@@ -1,14 +1,17 @@
 package com.adriangl.pokeapi_mvvm.pokemonlist
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.adriangl.pokeapi_mvvm.moves.*
+import com.adriangl.pokeapi_mvvm.moves.LoadMovesAction
+import com.adriangl.pokeapi_mvvm.moves.MovesState
+import com.adriangl.pokeapi_mvvm.moves.MovesStore
+import com.adriangl.pokeapi_mvvm.network.MoveName
 import com.adriangl.pokeapi_mvvm.network.Pokemon
+import com.adriangl.pokeapi_mvvm.network.PokemonMove
 import com.adriangl.pokeapi_mvvm.pokemon.PokeState
 import com.adriangl.pokeapi_mvvm.pokemon.PokeStore
 import com.adriangl.pokeapi_mvvm.utils.injection.bindViewModel
-import com.adriangl.pokeapi_mvvm.utils.mini.mergeStates
+import com.adriangl.pokeapi_mvvm.utils.mini.mergeListStates
 import com.adriangl.pokeapi_mvvm.utils.mini.viewmodel.RxAndroidViewModel
 import mini.*
 import mini.rx.flowable
@@ -28,11 +31,11 @@ class PokemonListViewModel(app: Application) : RxAndroidViewModel(app), KodeinAw
     private val pokemonListLiveData = MutableLiveData<PokemonListViewData>()
 
     init {
-        mergeStates<Task> {
-            merge(pokeStore) { pokemonTask }
-            merge(movesStore) { movesTask }
-        }.select {
-            PokemonListViewData.from(pokeStore.state, movesStore.state)
+        mergeListStates<Task> {
+            mergeList(pokeStore, Task.idle()) { listOf(pokemonTask) }
+            mergeList(movesStore, Task.idle()) { movesMapTask.values.toList() }
+        }.select { taskList ->
+            PokemonListViewData.from(taskList, pokeStore.state, movesStore.state)
         }.subscribe {
             pokemonListLiveData.postValue(it)
         }.track()
@@ -41,36 +44,30 @@ class PokemonListViewModel(app: Application) : RxAndroidViewModel(app), KodeinAw
             .select { it.pokemonTask }
             .subscribe {
                 if (it.isSuccess) {
-                    pokeStore.state.pokemonList!!.forEach { pokemon ->
-                        getMoves(pokemon.moves.map { it.move.id })
-                    }
+                    val movesList = pokeStore.state.pokemonList!!
+                        .flatMap { it.moves.subList(0, 4) } // Only 4 movements
+                        .distinctBy { it.move.name }.map { it.move.name }
+                    getMoves(movesList)
                 }
             }.track()
 
         if (pokeStore.state.pokemonList == null) {
             getPokemonList()
         }
-
-        pokeStore.state.pokemonList!!.forEach {
-            getMoves(it.moves.map { it.move.id })
-        }
-
     }
 
     fun getPokemonListLiveData() = pokemonListLiveData
 
     fun getPokemonList() {
-        dispatcher.dispatch(GetPokemonDetailsListAction())
+        dispatcher.dispatchAsync(GetPokemonDetailsListAction())
     }
 
-    fun getMoves(moves: List<MoveId>) {
-        moves.forEach {
-            dispatcher.dispatch(LoadMoveAction(it))
-        }
+    fun getMoves(moves: List<MoveName>) {
+        dispatcher.dispatchAsync(LoadMovesAction(moves))
     }
 
     fun filterPokemonList(query: String?) {
-        dispatcher.dispatch(FilterPokemonListAction(query))
+        dispatcher.dispatchAsync(FilterPokemonListAction(query))
     }
 }
 
@@ -81,30 +78,38 @@ data class PokemonListItem(
     val currentMoves: List<PokemonMove>
 ) {
     companion object {
-        fun from(pokemon: Pokemon, pokemonMoves: List<PokemonMove>): PokemonListItem {
-            return PokemonListItem(pokemon.name, pokemon.order, pokemon.sprites.frontDefault, pokemonMoves)
+        fun from(pokemon: Pokemon, pokemonMove: List<PokemonMove>): PokemonListItem {
+            return PokemonListItem(
+                pokemon.name,
+                pokemon.order,
+                pokemon.sprites.frontDefault,
+                pokemonMove
+            )
         }
     }
 }
 
 data class PokemonListViewData(val pokemonListRes: Resource<List<PokemonListItem>>) {
     companion object {
-        fun from(pokeState: PokeState, movesState: MovesState): PokemonListViewData {
-            val allTasks = listOf(movesState.movesTask, pokeState.pokemonTask)
+        fun from(
+            taskList: List<Task>,
+            pokeState: PokeState,
+            movesState: MovesState
+        ): PokemonListViewData {
 
-            Log.v("Tasks - movesTask", allTasks[0].toString())
-            Log.v("Tasks - pokemonTask", allTasks[1].toString())
-
+            //It's safer to handle the task of the subscription instead of:
             return when {
-                allTasks.allSuccesful() -> {
-                    val pokemonWithMovements = pokeState.filteredPokemonList!!.map { pokemon ->
-                        val moveList =
-                            pokemon.moves.map { movesState.movesMap.getValue(it.move.id) }
+                taskList.allSuccesful() -> {
+                    val pokemonWithMovements = pokeState.pokemonList!!.map { pokemon ->
+                        val moveList = pokemon.moves.subList(0, 4).map {
+                            movesState.movesMap.getValue(it.move.name)
+                        }
+
                         PokemonListItem.from(pokemon, moveList)
                     }
                     PokemonListViewData(Resource.success(pokemonWithMovements))
                 }
-                allTasks.anyFailure() -> {
+                taskList.anyFailure() -> {
                     PokemonListViewData(Resource.failure())
                 }
                 else -> {

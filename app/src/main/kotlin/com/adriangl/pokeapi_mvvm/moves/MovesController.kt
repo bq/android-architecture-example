@@ -1,12 +1,14 @@
 package com.adriangl.pokeapi_mvvm.moves
 
+import com.adriangl.pokeapi_mvvm.network.MoveName
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import mini.Dispatcher
+import mini.Task
 
 
 interface MovesController {
-    fun getMove(moveId: MoveId)
+    fun getMove(moveName: MoveName)
 }
 
 class MovesControllerImpl(
@@ -14,14 +16,13 @@ class MovesControllerImpl(
     private val dispatcher: Dispatcher
 ) : MovesController {
 
-    override fun getMove(moveId: MoveId) {
+    override fun getMove(moveName: MoveName) {
         GlobalScope.launch {
             try {
-                val move = movesApi.getMove(moveId)
-                dispatcher.dispatch(MoveLoadedAction(moveId, move))
-
+                val move = movesApi.getMove(moveName)
+                dispatcher.dispatch(MoveLoadedAction(moveName, move, Task.success()))
             } catch (e: Exception) {
-                dispatcher.dispatch(MoveFailedAction(moveId))
+                dispatcher.dispatch(MoveLoadedAction(moveName, null, Task.failure()))
             }
         }
     }

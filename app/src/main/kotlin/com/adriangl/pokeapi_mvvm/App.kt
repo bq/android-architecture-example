@@ -6,6 +6,7 @@ import androidx.annotation.RestrictTo
 import androidx.lifecycle.ViewModelProvider
 import com.adriangl.pokeapi_mvvm.di.networkModule
 import com.adriangl.pokeapi_mvvm.di.storeModule
+import com.adriangl.pokeapi_mvvm.di.utilsModule
 import com.adriangl.pokeapi_mvvm.moves.movesStoreModule
 import com.adriangl.pokeapi_mvvm.pokemon.pokeStoreModule
 import com.adriangl.pokeapi_mvvm.pokemonlist.pokemonListViewModelModule
@@ -62,6 +63,7 @@ class App : Application(), KodeinAware {
             // First, add all dependencies
             addImport(appModule, true)
             addImport(storeModule, true)
+            addImport(utilsModule, true)
             addImport(networkModule, true)
             addImport(pokeStoreModule, true)
             addImport(movesStoreModule, true)

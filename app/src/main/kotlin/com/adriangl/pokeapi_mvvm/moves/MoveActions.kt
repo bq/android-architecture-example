@@ -1,7 +1,9 @@
 package com.adriangl.pokeapi_mvvm.moves
 
-data class LoadMoveAction(val moveId: MoveId)
+import com.adriangl.pokeapi_mvvm.network.MoveName
+import com.adriangl.pokeapi_mvvm.network.PokemonMove
+import mini.Task
 
-data class MoveLoadedAction(val moveId: MoveId, val pokemonMove: PokemonMove)
+data class LoadMovesAction(val moveNameList: List<MoveName>)
 
-data class MoveFailedAction(val moveId: MoveId)
+data class MoveLoadedAction(val moveName: MoveName, val pokemonMove: PokemonMove?, val task: Task)

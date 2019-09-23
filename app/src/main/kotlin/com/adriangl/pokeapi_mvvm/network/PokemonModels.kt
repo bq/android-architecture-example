@@ -1,6 +1,9 @@
 package com.adriangl.pokeapi_mvvm.network
 
-typealias PokemonId = Int
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
+
+typealias MoveName = String
 
 data class ResourceList(
     val count: Int,
@@ -15,340 +18,424 @@ data class Result(
 )
 
 data class Ability(
-    val id: Int,
-    val name: String,
-    val isMainSeries: Boolean,
-    val generation: NamedApiResource,
-    val names: List<Name>,
-    val effectEntries: List<VerboseEffect>,
-    val effectChanges: List<AbilityEffectChange>,
-    val flavorTextEntries: List<AbilityFlavorText>,
-    val pokemon: List<AbilityPokemon>
-)
-
-data class AbilityEffectChange(
-    val effectEntries: List<Effect>,
-    val versionGroup: NamedApiResource
-)
-
-data class AbilityFlavorText(
-    val flavorText: String,
-    val language: NamedApiResource,
-    val versionGroup: NamedApiResource
-)
-
-data class AbilityPokemon(
+    @Json(name = "ability")
+    val ability: AbilityX,
+    @Json(name = "is_hidden")
     val isHidden: Boolean,
-    val slot: Int,
-    val pokemon: NamedApiResource
+    @Json(name = "slot")
+    val slot: Int
 )
 
-data class Characteristic(
-    val id: Int,
-    val geneModulo: Int,
-    val possibleValues: List<Int>,
-    val descriptions: List<Description>
-)
-
-data class EggGroup(
-    val id: Int,
+data class AbilityX(
+    @Json(name = "name")
     val name: String,
-    val names: List<Name>,
-    val pokemonSpecies: List<NamedApiResource>
+    @Json(name = "url")
+    val url: String
 )
 
-data class Gender(
-    val id: Int,
+data class Form(
+    @Json(name = "name")
     val name: String,
-    val pokemonSpeciesDetails: List<PokemonSpeciesGender>,
-    val requiredForEvolution: List<NamedApiResource>
+    @Json(name = "url")
+    val url: String
 )
 
-data class PokemonSpeciesGender(
-    val rate: Int,
-    val pokemonSpecies: NamedApiResource
+data class GameIndex(
+    @Json(name = "game_index")
+    val gameIndex: Int,
+    @Json(name = "version")
+    val version: Version
 )
 
-data class GrowthRate(
-    val id: Int,
+data class Move(
+    @Json(name = "move")
+    val move: MoveX,
+    @Json(name = "version_group_details")
+    val versionGroupDetails: List<VersionGroupDetail>
+)
+
+data class MoveLearnMethod(
+    @Json(name = "name")
     val name: String,
-    val formula: String,
-    val descriptions: List<Description>,
-    val levels: List<GrowthRateExperienceLevel>,
-    val pokemonSpecies: List<NamedApiResource>
+    @Json(name = "url")
+    val url: String
 )
 
-data class GrowthRateExperienceLevel(
-    val level: Int,
-    val experience: Int
-)
-
-data class Nature(
-    val id: Int,
+data class MoveX(
+    @Json(name = "name")
     val name: String,
-    val decreasedStat: NamedApiResource?,
-    val increasedStat: NamedApiResource?,
-    val hatesFlavor: NamedApiResource?,
-    val likesFlavor: NamedApiResource?,
-    val pokeathlonStatChanges: List<NatureStatChange>,
-    val moveBattleStylePreferences: List<MoveBattleStylePreference>,
-    val names: List<Name>
-)
-
-data class NatureStatChange(
-    val maxChange: Int,
-    val pokeathlonStat: NamedApiResource
-)
-
-data class MoveBattleStylePreference(
-    val lowHpPreference: Int,
-    val highHpPreference: Int,
-    val moveBattleStyle: NamedApiResource
-)
-
-data class PokeathlonStat(
-    val id: Int,
-    val name: String,
-    val names: List<Name>,
-    val affectingNatures: NaturePokeathlonStatAffectSets
-)
-
-data class NaturePokeathlonStatAffectSets(
-    val increase: List<NaturePokeathlonStatAffect>,
-    val decrease: List<NaturePokeathlonStatAffect>
-)
-
-data class NaturePokeathlonStatAffect(
-    val maxChange: Int,
-    val nature: NamedApiResource
+    @Json(name = "url")
+    val url: String
 )
 
 data class Pokemon(
-    val id: PokemonId,
-    val name: String,
+    @Json(name = "abilities")
+    val abilities: List<Ability>,
+    @Json(name = "base_experience")
     val baseExperience: Int,
+    @Json(name = "forms")
+    val forms: List<Form>,
+    @Json(name = "game_indices")
+    val gameIndices: List<GameIndex>,
+    @Json(name = "height")
     val height: Int,
+    @Json(name = "held_items")
+    val heldItems: List<Any>,
+    @Json(name = "id")
+    val id: Int,
+    @Json(name = "is_default")
     val isDefault: Boolean,
+    @Json(name = "location_area_encounters")
+    val locationAreaEncounters: String,
+    @Json(name = "moves")
+    val moves: List<Move>,
+    @Json(name = "name")
+    val name: String,
+    @Json(name = "order")
     val order: Int,
-    val weight: Int,
-    val species: NamedApiResource,
-    val abilities: List<PokemonAbility>,
-    val forms: List<NamedApiResource>,
-    val gameIndices: List<VersionGameIndex>,
-    val heldItems: List<PokemonHeldItem>,
-    val moves: List<PokemonMove>,
-    val stats: List<PokemonStat>,
-    val types: List<PokemonType>,
-    val sprites: PokemonSprites
+    @Json(name = "species")
+    val species: Species,
+    @Json(name = "sprites")
+    val sprites: Sprites,
+    @Json(name = "stats")
+    val stats: List<Stat>,
+    @Json(name = "types")
+    val types: List<Type>,
+    @Json(name = "weight")
+    val weight: Int
+) {
+    override fun toString(): String {
+        return "Pokemon(id=$id, name='$name')"
+    }
+}
+
+data class Species(
+    @Json(name = "name")
+    val name: String,
+    @Json(name = "url")
+    val url: String
 )
 
-data class PokemonSprites(
+data class Sprites(
+    @Json(name = "back_default")
     val backDefault: String?,
-    val backShiny: String?,
-    val frontDefault: String?,
-    val frontShiny: String?,
+    @Json(name = "back_female")
     val backFemale: String?,
-    val backShinyFemale: String?,
-    val frontFemale: String?,
-    val frontShinyFemale: String?
-
-)
-
-data class PokemonAbility(
-    val isHidden: Boolean,
-    val slot: Int,
-    val ability: NamedApiResource
-)
-
-data class PokemonHeldItem(
-    val item: NamedApiResource,
-    val versionDetails: List<PokemonHeldItemVersion>
-)
-
-data class PokemonHeldItemVersion(
-    val version: NamedApiResource,
-    val rarity: Int
-)
-
-data class PokemonMove(
-    val move: NamedApiResource,
-    val versionGroupDetails: List<PokemonMoveVersion>
-)
-
-data class PokemonMoveVersion(
-    val moveLearnMethod: NamedApiResource,
-    val versionGroup: NamedApiResource,
-    val levelLearnedAt: Int
-)
-
-data class PokemonStat(
-    val stat: NamedApiResource,
-    val effort: Int,
-    val baseStat: Int
-)
-
-data class PokemonType(
-    val slot: Int,
-    val type: NamedApiResource
-)
-
-data class LocationAreaEncounter(
-    val locationArea: NamedApiResource,
-    val versionDetails: List<VersionEncounterDetail>
-)
-
-data class PokemonColor(
-    val id: Int,
-    val name: String,
-    val names: List<Name>,
-    val pokemonSpecies: List<NamedApiResource>
-)
-
-data class PokemonForm(
-    val id: Int,
-    val name: String,
-    val order: Int,
-    val formOrder: Int,
-    val isDefault: Boolean,
-    val isBattleOnly: Boolean,
-    val isMega: Boolean,
-    val formName: String,
-    val pokemon: NamedApiResource,
-    val versionGroup: NamedApiResource,
-    val sprites: PokemonFormSprites
-)
-
-data class PokemonFormSprites(
-    val backDefault: String?,
+    @Json(name = "back_shiny")
     val backShiny: String?,
+    @Json(name = "back_shiny_female")
+    val backShinyFemale: String?,
+    @Json(name = "front_default")
     val frontDefault: String?,
-    val frontShiny: String?
-)
-
-data class PokemonHabitat(
-    val id: Int,
-    val name: String,
-    val names: List<Name>,
-    val pokemonSpecies: List<NamedApiResource>
-)
-
-data class PokemonShape(
-    val id: Int,
-    val name: String,
-    val awesomeNames: List<AwesomeName>,
-    val names: List<Name>,
-    val pokemonSpecies: List<NamedApiResource>
-)
-
-data class AwesomeName(
-    val awesomeName: String,
-    val language: NamedApiResource
-)
-
-data class PokemonSpecies(
-    val id: Int,
-    val name: String,
-    val order: Int,
-    val genderRate: Int,
-    val captureRate: Int,
-    val baseHappiness: Int,
-    val isBaby: Boolean,
-    val hatchCounter: Int,
-    val hasGenderDifferences: Boolean,
-    val formsSwitchable: Boolean,
-    val growthRate: NamedApiResource,
-    val pokedexNumbers: List<PokemonSpeciesDexEntry>,
-    val eggGroups: List<NamedApiResource>,
-    val color: NamedApiResource,
-    val shape: NamedApiResource,
-    val evolvesFromSpecies: NamedApiResource?,
-    val evolutionChain: ApiResource,
-    val habitat: NamedApiResource?,
-    val generation: NamedApiResource,
-    val names: List<Name>,
-    val palParkEncounters: List<PalParkEncounterArea>,
-    val formDescriptions: List<Description>,
-    val genera: List<Genus>,
-    val varieties: List<PokemonSpeciesVariety>,
-    val flavorTextEntries: List<PokemonSpeciesFlavorText>
-)
-
-data class PokemonSpeciesFlavorText(
-    val flavorText: String,
-    val language: NamedApiResource,
-    val version: NamedApiResource
-)
-
-data class Genus(
-    val genus: String,
-    val language: NamedApiResource
-)
-
-data class PokemonSpeciesDexEntry(
-    val entryNumber: Int,
-    val pokedex: NamedApiResource
-)
-
-data class PalParkEncounterArea(
-    val baseScore: Int,
-    val rate: Int,
-    val area: NamedApiResource
-)
-
-data class PokemonSpeciesVariety(
-    val isDefault: Boolean,
-    val pokemon: NamedApiResource
+    @Json(name = "front_female")
+    val frontFemale: String?,
+    @Json(name = "front_shiny")
+    val frontShiny: String?,
+    @Json(name = "front_shiny_female")
+    val frontShinyFemale: String?
 )
 
 data class Stat(
-    val id: Int,
+    @Json(name = "base_stat")
+    val baseStat: Int,
+    @Json(name = "effort")
+    val effort: Int,
+    @Json(name = "stat")
+    val stat: StatX
+)
+
+data class StatX(
+    @Json(name = "name")
     val name: String,
-    val gameIndex: Int,
-    val isBattleOnly: Boolean,
-    val affectingMoves: MoveStatAffectSets,
-    val affectingNatures: NatureStatAffectSets,
-    val characteristics: List<ApiResource>,
-    val moveDamageClass: NamedApiResource?,
-    val names: List<Name>
-)
-
-data class MoveStatAffectSets(
-    val increase: List<MoveStatAffect>,
-    val decrease: List<MoveStatAffect>
-)
-
-data class MoveStatAffect(
-    val change: Int,
-    val move: NamedApiResource
-)
-
-data class NatureStatAffectSets(
-    val increase: List<NamedApiResource>,
-    val decrease: List<NamedApiResource>
+    @Json(name = "url")
+    val url: String
 )
 
 data class Type(
-    val id: Int,
-    val name: String,
-    val damageRelations: TypeRelations,
-    val gameIndices: List<GenerationGameIndex>,
-    val generation: NamedApiResource,
-    val moveDamageClass: NamedApiResource?,
-    val names: List<Name>,
-    val pokemon: List<TypePokemon>,
-    val moves: List<NamedApiResource>
-)
-
-data class TypePokemon(
+    @Json(name = "slot")
     val slot: Int,
-    val pokemon: NamedApiResource
+    @Json(name = "type")
+    val type: TypeX
 )
 
-data class TypeRelations(
-    val noDamageTo: List<NamedApiResource>,
-    val halfDamageTo: List<NamedApiResource>,
-    val doubleDamageTo: List<NamedApiResource>,
-    val noDamageFrom: List<NamedApiResource>,
-    val halfDamageFrom: List<NamedApiResource>,
-    val doubleDamageFrom: List<NamedApiResource>
+data class TypeX(
+    @Json(name = "name")
+    val name: String,
+    @Json(name = "url")
+    val url: String
+)
+
+data class Version(
+    @Json(name = "name")
+    val name: String,
+    @Json(name = "url")
+    val url: String
+)
+
+data class VersionGroup(
+    @Json(name = "name")
+    val name: String,
+    @Json(name = "url")
+    val url: String
+)
+
+data class VersionGroupDetail(
+    @Json(name = "level_learned_at")
+    val levelLearnedAt: Int,
+    @Json(name = "move_learn_method")
+    val moveLearnMethod: MoveLearnMethod,
+    @Json(name = "version_group")
+    val versionGroup: VersionGroup
+)
+
+@JsonClass(generateAdapter = true)
+data class PokemonMove(
+    @Json(name = "accuracy")
+    val accuracy: Int?,
+    @Json(name = "contest_combos")
+    val contestCombos: ContestCombos?,
+    @Json(name = "contest_effect")
+    val contestEffect: ContestEffect?,
+    @Json(name = "contest_type")
+    val contestType: ContestType?,
+    @Json(name = "damage_class")
+    val damageClass: DamageClass?,
+    @Json(name = "effect_chance")
+    val effectChance: Int?,
+    @Json(name = "effect_changes")
+    val effectChanges: List<Any>?,
+    @Json(name = "effect_entries")
+    val effectEntries: List<EffectEntry>,
+    @Json(name = "flavor_text_entries")
+    val flavorTextEntries: List<FlavorTextEntry>,
+    @Json(name = "generation")
+    val generation: Generation,
+    @Json(name = "id")
+    val id: Int,
+    @Json(name = "machines")
+    val machines: List<Machine>?,
+    @Json(name = "meta")
+    val meta: Meta,
+    @Json(name = "name")
+    val name: String,
+    @Json(name = "names")
+    val names: List<Name>,
+    @Json(name = "past_values")
+    val pastValues: List<Any>?,
+    @Json(name = "power")
+    val power: Int?,
+    @Json(name = "pp")
+    val pp: Int?,
+    @Json(name = "priority")
+    val priority: Int?,
+    @Json(name = "stat_changes")
+    val statChanges: List<Any>?,
+    @Json(name = "super_contest_effect")
+    val superContestEffect: SuperContestEffect?,
+    @Json(name = "target")
+    val target: Target,
+    @Json(name = "type")
+    val type: MoveType
+)
+
+@JsonClass(generateAdapter = true)
+data class ContestEffect(
+    @Json(name = "url")
+    val url: String
+)
+
+@JsonClass(generateAdapter = true)
+data class ContestType(
+    @Json(name = "name")
+    val name: String,
+    @Json(name = "url")
+    val url: String
+)
+
+@JsonClass(generateAdapter = true)
+data class DamageClass(
+    @Json(name = "name")
+    val name: String,
+    @Json(name = "url")
+    val url: String
+)
+
+@JsonClass(generateAdapter = true)
+data class Target(
+    @Json(name = "name")
+    val name: String,
+    @Json(name = "url")
+    val url: String
+)
+
+@JsonClass(generateAdapter = true)
+data class Meta(
+    @Json(name = "ailment")
+    val ailment: Ailment,
+    @Json(name = "ailment_chance")
+    val ailmentChance: Int,
+    @Json(name = "category")
+    val category: Category,
+    @Json(name = "crit_rate")
+    val critRate: Int,
+    @Json(name = "drain")
+    val drain: Int?,
+    @Json(name = "flinch_chance")
+    val flinchChance: Int?,
+    @Json(name = "healing")
+    val healing: Int,
+    @Json(name = "max_hits")
+    val maxHits: Any?,
+    @Json(name = "max_turns")
+    val maxTurns: Any?,
+    @Json(name = "min_hits")
+    val minHits: Any?,
+    @Json(name = "min_turns")
+    val minTurns: Any?,
+    @Json(name = "stat_chance")
+    val statChance: Int?
+)
+
+@JsonClass(generateAdapter = true)
+data class Category(
+    @Json(name = "name")
+    val name: String,
+    @Json(name = "url")
+    val url: String
+)
+
+@JsonClass(generateAdapter = true)
+data class Ailment(
+    @Json(name = "name")
+    val name: String,
+    @Json(name = "url")
+    val url: String
+)
+
+@JsonClass(generateAdapter = true)
+data class SuperContestEffect(
+    @Json(name = "url")
+    val url: String
+)
+
+@JsonClass(generateAdapter = true)
+data class EffectEntry(
+    @Json(name = "effect")
+    val effect: String,
+    @Json(name = "language")
+    val language: Language,
+    @Json(name = "short_effect")
+    val shortEffect: String
+)
+
+@JsonClass(generateAdapter = true)
+data class Language(
+    @Json(name = "name")
+    val name: String,
+    @Json(name = "url")
+    val url: String
+)
+
+@JsonClass(generateAdapter = true)
+data class Name(
+    @Json(name = "language")
+    val language: Language,
+    @Json(name = "name")
+    val name: String
+)
+
+@JsonClass(generateAdapter = true)
+data class LanguageX(
+    @Json(name = "name")
+    val name: String,
+    @Json(name = "url")
+    val url: String
+)
+
+@JsonClass(generateAdapter = true)
+data class FlavorTextEntry(
+    @Json(name = "flavor_text")
+    val flavorText: String,
+    @Json(name = "language")
+    val language: LanguageX,
+    @Json(name = "version_group")
+    val versionGroup: VersionGroup
+)
+
+@JsonClass(generateAdapter = true)
+data class MoveType(
+    @Json(name = "name")
+    val name: String,
+    @Json(name = "url")
+    val url: String
+)
+
+@JsonClass(generateAdapter = true)
+data class Machine(
+    @Json(name = "machine")
+    val machine: MachineX,
+    @Json(name = "version_group")
+    val versionGroup: VersionGroupX
+)
+
+@JsonClass(generateAdapter = true)
+data class VersionGroupX(
+    @Json(name = "name")
+    val name: String,
+    @Json(name = "url")
+    val url: String
+)
+
+@JsonClass(generateAdapter = true)
+data class MachineX(
+    @Json(name = "url")
+    val url: String
+)
+
+@JsonClass(generateAdapter = true)
+data class ContestCombos(
+    @Json(name = "normal")
+    val normal: Normal,
+    @Json(name = "super")
+    val superX: Super
+)
+
+@JsonClass(generateAdapter = true)
+data class Super(
+    @Json(name = "use_after")
+    val useAfter: Any?,
+    @Json(name = "use_before")
+    val useBefore: Any?
+)
+
+@JsonClass(generateAdapter = true)
+data class Normal(
+    @Json(name = "use_after")
+    val useAfter: List<UseAfter>?,
+    @Json(name = "use_before")
+    val useBefore: List<UseBefore>?
+)
+
+@JsonClass(generateAdapter = true)
+data class UseBefore(
+    @Json(name = "name")
+    val name: String,
+    @Json(name = "url")
+    val url: String
+)
+
+@JsonClass(generateAdapter = true)
+data class UseAfter(
+    @Json(name = "name")
+    val name: String,
+    @Json(name = "url")
+    val url: String
+)
+
+@JsonClass(generateAdapter = true)
+data class Generation(
+    @Json(name = "name")
+    val name: String,
+    @Json(name = "url")
+    val url: String
 )
