@@ -97,7 +97,6 @@ data class PokemonListViewData(val pokemonListRes: Resource<List<PokemonListItem
             movesState: MovesState
         ): PokemonListViewData {
 
-            //It's safer to handle the task of the subscription instead of:
             return when {
                 taskList.allSuccesful() -> {
                     val pokemonWithMovements = pokeState.pokemonList!!.map { pokemon ->
