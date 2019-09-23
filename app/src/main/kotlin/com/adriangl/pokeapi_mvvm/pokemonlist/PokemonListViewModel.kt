@@ -9,6 +9,7 @@ import com.adriangl.pokeapi_mvvm.network.Pokemon
 import com.adriangl.pokeapi_mvvm.pokemon.PokeState
 import com.adriangl.pokeapi_mvvm.pokemon.PokeStore
 import com.adriangl.pokeapi_mvvm.utils.injection.bindViewModel
+import com.adriangl.pokeapi_mvvm.utils.map
 import com.adriangl.pokeapi_mvvm.utils.mini.viewmodel.RxAndroidViewModel
 import mini.*
 import mini.rx.flowable
@@ -40,7 +41,7 @@ class PokemonListViewModel(app: Application) : RxAndroidViewModel(app), KodeinAw
     }
 
     fun getPokemonListLiveData(): LiveData<PokemonListViewData> =
-        Transformations.map(pokemonListLiveData) { viewData ->
+        pokemonListLiveData.map { viewData ->
             viewData.copy(pokemonListRes = viewData.pokemonListRes.map {
                 it.filter(viewData.filter)
             })
