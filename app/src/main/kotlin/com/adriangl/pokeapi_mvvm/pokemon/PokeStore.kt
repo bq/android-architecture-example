@@ -13,8 +13,6 @@ import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
 import org.kodein.di.generic.singleton
 
-typealias Page = Int
-
 data class PokeState(
     val pokemonList: List<Pokemon>? = null,
     val pokemonListTask: Task = Task.idle(),

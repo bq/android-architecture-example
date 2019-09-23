@@ -1,7 +1,7 @@
 package com.adriangl.pokeapi_mvvm.moves
 
 import com.adriangl.pokeapi_mvvm.network.*
-import com.squareup.moshi.Json
+import com.google.gson.annotations.SerializedName
 
 typealias MoveId = Int
 
@@ -30,9 +30,9 @@ data class Move(
 )
 
 data class ContestComboSets(
-    @Json(name = "normal")
+    @SerializedName("normal")
     val normalSet: ContestComboDetail,
-    @Json(name = "super")
+    @SerializedName("super")
     val superSet: ContestComboDetail
 )
 
