@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import com.adriangl.pokeapi_mvvm.network.Pokemon
 import com.adriangl.pokeapi_mvvm.pokemon.PokeState
 import com.adriangl.pokeapi_mvvm.pokemon.PokeStore
@@ -38,7 +39,12 @@ class PokemonListViewModel(app: Application) : RxAndroidViewModel(app), KodeinAw
         }
     }
 
-    fun getPokemonListLiveData(): LiveData<PokemonListViewData> = pokemonListLiveData
+    fun getPokemonListLiveData(): LiveData<PokemonListViewData> =
+        Transformations.map(pokemonListLiveData) { viewData ->
+            viewData.copy(pokemonListRes = viewData.pokemonListRes.map {
+                it.filter(viewData.filter)
+            })
+        }
 
     @VisibleForTesting
     fun getPokemonMutableLiveData() = pokemonListLiveData
@@ -59,7 +65,6 @@ class PokemonListViewModel(app: Application) : RxAndroidViewModel(app), KodeinAw
     }
 }
 
-
 data class PokemonListItem(val name: String, val number: Int, val sprite: String?) {
     companion object {
         fun from(pokemon: Pokemon): PokemonListItem {
@@ -72,6 +77,7 @@ data class PokemonListViewData(
     val pokemonListRes: Resource<List<PokemonListItem>>,
     val filter: (PokemonListItem) -> Boolean = { true }
 ) {
+
     companion object {
         fun from(pokeState: PokeState): PokemonListViewData {
             var resource: Resource<List<PokemonListItem>> = Resource.empty()
@@ -80,9 +86,7 @@ data class PokemonListViewData(
                 .onSuccess {
                     resource =
                         Resource.success(pokeState.filteredPokemonList!!.map {
-                            PokemonListItem.from(
-                                it
-                            )
+                            PokemonListItem.from(it)
                         })
                 }
                 .onFailure { resource = Resource.failure() }
@@ -90,6 +94,8 @@ data class PokemonListViewData(
             return PokemonListViewData(resource)
         }
     }
+
+
 }
 
 val pokemonListViewModelModule = Kodein.Module("pokemonListViewModelModule", true) {
