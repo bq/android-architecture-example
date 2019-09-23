@@ -215,7 +215,7 @@ data class PokemonMove(
     @Json(name = "machines")
     val machines: List<Machine>?,
     @Json(name = "meta")
-    val meta: Meta,
+    val meta: Meta?,
     @Json(name = "name")
     val name: String,
     @Json(name = "names")

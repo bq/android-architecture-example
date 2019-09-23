@@ -35,7 +35,6 @@
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/pokemon_number"
-        app:layout_constraintTop_toBottomOf="@+id/pokemon_number"
         app:layout_constraintTop_toTopOf="@+id/pokemon_number"
         app:layout_constraintBottom_toTopOf="@+id/pokemon_move_title"
         tools:text="Pokimon" />
@@ -57,7 +56,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:textSize="14sp"
-        app:layout_goneMarginStart="16dp"
         android:layout_marginTop="4dp"
         android:layout_marginBottom="4dp"
         app:layout_constraintStart_toStartOf="@+id/pokemon_move_title"
@@ -73,7 +71,6 @@
         android:textSize="14sp"
         android:layout_marginTop="4dp"
         android:layout_marginBottom="4dp"
-        app:layout_goneMarginStart="16dp"
         app:layout_constraintStart_toStartOf="@+id/pokemon_move_title"
         app:layout_constraintTop_toBottomOf="@+id/pokemon_move_1"
         app:layout_constraintBottom_toTopOf="@+id/pokemon_move_3"
