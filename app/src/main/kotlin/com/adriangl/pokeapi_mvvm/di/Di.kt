@@ -1,12 +1,10 @@
 package com.adriangl.pokeapi_mvvm.di
 
 import android.content.Context
-import com.adriangl.pokeapi_mvvm.moves.MovesApi
-import com.adriangl.pokeapi_mvvm.network.*
-import com.google.gson.FieldNamingPolicy
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.google.gson.reflect.TypeToken
+import com.adriangl.pokeapi_mvvm.network.PokeApi
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import mini.Store
 import okhttp3.Cache
 import okhttp3.HttpUrl
@@ -18,7 +16,8 @@ import org.kodein.di.generic.instance
 import org.kodein.di.generic.setBinding
 import org.kodein.di.generic.singleton
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.moshi.MoshiConverterFactory
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 val networkModule = Kodein.Module("network") {
@@ -44,27 +43,8 @@ val networkModule = Kodein.Module("network") {
         Retrofit.Builder()
             .baseUrl(HttpUrl.parse(endpoint)!!)
             .client(instance())
-            .addConverterFactory(GsonConverterFactory.create(instance()))
-            .addConverterFactory(
-                GsonConverterFactory.create(
-                    GsonBuilder().apply {
-                        setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-                        registerTypeAdapter(
-                            TypeToken.get(ApiResource::class.java).type,
-                            ApiResourceAdapter()
-                        )
-                        registerTypeAdapter(
-                            TypeToken.get(NamedApiResource::class.java).type,
-                            NamedApiResourceAdapter()
-                        )
-                    }.create()
-                )
-            )
+            .addConverterFactory(MoshiConverterFactory.create(instance()))
             .build()
-    }
-
-    bind<Gson>() with singleton {
-        Gson()
     }
 
     bind<PokeApi>() with singleton {
@@ -72,11 +52,18 @@ val networkModule = Kodein.Module("network") {
 
         retrofit.create(PokeApi::class.java)
     }
+}
 
-    bind<MovesApi>() with singleton {
-        val retrofit: Retrofit = instance()
-
-        retrofit.create(MovesApi::class.java)
+val utilsModule = Kodein.Module("utils") {
+    bind<Moshi>() with singleton {
+        Moshi.Builder()
+            .add(KotlinJsonAdapterFactory())
+            // Add adapter to parse RFC3339 dates to Date objects
+            .add(
+                Date::class.java,
+                Rfc3339DateJsonAdapter()
+            )
+            .build()
     }
 }
 

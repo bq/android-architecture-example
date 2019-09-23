@@ -11,7 +11,7 @@ import org.kodein.di.generic.instance
 import org.kodein.di.generic.singleton
 
 data class MovesState(
-    val movesMap: Map<MoveId, Move> = emptyMap(),
+    val movesMap: Map<MoveId, PokemonMove> = emptyMap(),
     val movesTask: Task = Task.idle()
 )
 
@@ -45,23 +45,21 @@ class MovesStore(private val movesController: MovesController) : Store<MovesStat
     //Therefore is not needed a Map<MoveId, Move?>.
     @Reducer
     fun onMovesLoadedAction(action: MoveLoadedAction) {
-        val newMovesMap = state.movesMap.replace(action.moveId, action.move)
-        val newMovesMapTask = Task.success()
+        val newMovesMap = state.movesMap.replace(action.moveId, action.pokemonMove)
 
         setState(
             state.copy(
                 movesMap = newMovesMap,
-                movesTask = newMovesMapTask
+                movesTask = Task.success()
             )
         )
     }
 
     @Reducer
     fun onMovesFailedAction(action: MoveFailedAction) {
-        val newMovesMapTask = Task.failure()
         setState(
             state.copy(
-                movesTask = newMovesMapTask
+                movesTask = Task.failure()
             )
         )
     }

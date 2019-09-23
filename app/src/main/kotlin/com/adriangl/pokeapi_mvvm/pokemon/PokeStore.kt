@@ -15,7 +15,7 @@ import org.kodein.di.generic.singleton
 
 data class PokeState(
     val pokemonList: List<Pokemon>? = null,
-    val pokemonListTask: Task = Task.idle(),
+    val pokemonTask: Task = Task.idle(),
     val searchQuery: String? = null,
     val filteredPokemonList: List<Pokemon>? = null
 )
@@ -24,8 +24,8 @@ class PokeStore(private val pokeController: PokeController) : Store<PokeState>()
 
     @Reducer
     fun getPokemonDetailsList(action: GetPokemonDetailsListAction) {
-        if (state.pokemonListTask.isLoading) return
-        setState(state.copy(pokemonListTask = Task.loading()))
+        if (state.pokemonTask.isLoading) return
+        setState(state.copy(pokemonTask = Task.loading()))
         pokeController.getPokemonDetailsList()
     }
 
@@ -34,7 +34,7 @@ class PokeStore(private val pokeController: PokeController) : Store<PokeState>()
         setState(
             state.copy(
                 pokemonList = action.pokemonList,
-                pokemonListTask = action.task,
+                pokemonTask = action.task,
                 filteredPokemonList = action.pokemonList
             )
         )
