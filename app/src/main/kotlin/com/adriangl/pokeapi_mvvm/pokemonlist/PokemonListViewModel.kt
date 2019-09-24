@@ -4,12 +4,10 @@ import android.app.Application
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
 import com.adriangl.pokeapi_mvvm.network.Pokemon
 import com.adriangl.pokeapi_mvvm.pokemon.PokeState
 import com.adriangl.pokeapi_mvvm.pokemon.PokeStore
 import com.adriangl.pokeapi_mvvm.utils.injection.bindViewModel
-import com.adriangl.pokeapi_mvvm.utils.map
 import com.adriangl.pokeapi_mvvm.utils.mini.viewmodel.RxAndroidViewModel
 import mini.*
 import mini.rx.flowable
@@ -40,12 +38,8 @@ class PokemonListViewModel(app: Application) : RxAndroidViewModel(app), KodeinAw
         }
     }
 
-    fun getPokemonListLiveData(): LiveData<PokemonListViewData> =
-        pokemonListLiveData.map { viewData ->
-            viewData.copy(pokemonListRes = viewData.pokemonListRes.map {
-                it.filter(viewData.filter)
-            })
-        }
+    fun getPokemonListLiveData(): LiveData<PokemonListViewData> = pokemonListLiveData
+
 
     @VisibleForTesting
     fun getPokemonMutableLiveData() = pokemonListLiveData
@@ -60,9 +54,7 @@ class PokemonListViewModel(app: Application) : RxAndroidViewModel(app), KodeinAw
     }
 
     fun filterList(query: String) {
-        pokemonListLiveData.postValue(pokemonListLiveData.value?.copy(filter = {
-            it.name.contains(query, true)
-        }))
+        dispatcher.dispatch(FilterPokemonListAction(query))
     }
 }
 
@@ -74,10 +66,7 @@ data class PokemonListItem(val name: String, val number: Int, val sprite: String
     }
 }
 
-data class PokemonListViewData(
-    val pokemonListRes: Resource<List<PokemonListItem>>,
-    val filter: (PokemonListItem) -> Boolean = { true }
-) {
+data class PokemonListViewData(val pokemonListRes: Resource<List<PokemonListItem>>) {
 
     companion object {
         fun from(pokeState: PokeState): PokemonListViewData {
@@ -86,9 +75,9 @@ data class PokemonListViewData(
                 .onLoading { resource = Resource.loading() }
                 .onSuccess {
                     resource =
-                        Resource.success(pokeState.filteredPokemonList!!.map {
+                        Resource.success(pokeState.pokemonList!!.map {
                             PokemonListItem.from(it)
-                        })
+                        }.filter(pokeState.filter))
                 }
                 .onFailure { resource = Resource.failure() }
 
