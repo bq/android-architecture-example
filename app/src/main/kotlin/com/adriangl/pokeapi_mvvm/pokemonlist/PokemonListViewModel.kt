@@ -121,7 +121,7 @@ data class PokemonListViewData(val pokemonListRes: Resource<List<PokemonListItem
                                     movesState.movesMap.getValue(it.move.name)
                                 }
                             PokemonListItem.from(pokemon, moveList)
-                        }.filter(pokeState.filter)
+                        }
 
                     PokemonListViewData(Resource.success(pokemonWithMovements))
                 }
