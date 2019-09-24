@@ -1,6 +1,8 @@
 package com.adriangl.pokeapi_mvvm.pokemonlist
 
 import android.app.Application
+import androidx.annotation.VisibleForTesting
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.adriangl.pokeapi_mvvm.moves.LoadMovesAction
 import com.adriangl.pokeapi_mvvm.moves.MovesState
@@ -46,28 +48,39 @@ class PokemonListViewModel(app: Application) : RxAndroidViewModel(app), KodeinAw
             .subscribe {
                 if (it.isSuccess) {
                     val movesList = pokeStore.state.pokemonList!!
-                        .flatMap { it.moves.subList(0, 4) } // Only 4 movements
+                        .flatMap {
+                            it.moves.subList(0, 4.coerceAtMost(it.moves.size))
+                        } // Only 4 movements
                         .distinctBy { it.move.name }.map { it.move.name }
                     getMoves(movesList)
                 }
             }.track()
 
         if (pokeStore.state.pokemonList == null) {
-            getPokemonList()
+            getPokemonDetails()
         }
     }
 
-    fun getPokemonListLiveData() = pokemonListLiveData
+    fun getPokemonListLiveData(): LiveData<PokemonListViewData> = pokemonListLiveData
 
-    fun getPokemonList() {
-        dispatcher.dispatchAsync(GetPokemonDetailsListAction())
+
+    @VisibleForTesting
+    fun getPokemonMutableLiveData() = pokemonListLiveData
+
+    fun getPokemonDetails() {
+        if (pokemonListLiveData.value == null ||
+            pokemonListLiveData.value!!.pokemonListRes.isEmpty ||
+            pokemonListLiveData.value!!.pokemonListRes.isFailure
+        ) {
+            dispatcher.dispatch(GetPokemonDetailsListAction())
+        }
     }
 
     fun getMoves(moves: List<MoveName>) {
         dispatcher.dispatchAsync(LoadMovesAction(moves))
     }
 
-    fun filterPokemonList(query: String?) {
+    fun filterList(query: String) {
         dispatcher.dispatchAsync(FilterPokemonListAction(query))
     }
 }
@@ -91,6 +104,7 @@ data class PokemonListItem(
 }
 
 data class PokemonListViewData(val pokemonListRes: Resource<List<PokemonListItem>>) {
+
     companion object {
         fun from(
             taskList: List<Task>,
@@ -101,7 +115,7 @@ data class PokemonListViewData(val pokemonListRes: Resource<List<PokemonListItem
             return when {
                 taskList.allSuccesful() -> {
                     val pokemonWithMovements = pokeState.pokemonList!!.map { pokemon ->
-                        val moveList = pokemon.moves.subList(0, 4).map {
+                        val moveList = pokemon.moves.subList(0, 4.coerceAtMost(pokemon.moves.size)).map {
                             movesState.movesMap.getValue(it.move.name)
                         }
 
@@ -118,6 +132,8 @@ data class PokemonListViewData(val pokemonListRes: Resource<List<PokemonListItem
             }
         }
     }
+
+
 }
 
 val pokemonListViewModelModule = Kodein.Module("pokemonListViewModelModule", true) {

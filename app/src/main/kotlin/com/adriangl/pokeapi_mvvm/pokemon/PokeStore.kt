@@ -4,6 +4,8 @@ import com.adriangl.pokeapi_mvvm.network.Pokemon
 import com.adriangl.pokeapi_mvvm.pokemonlist.FilterPokemonListAction
 import com.adriangl.pokeapi_mvvm.pokemonlist.GetPokemonDetailsListAction
 import com.adriangl.pokeapi_mvvm.pokemonlist.PokemonDetailsListLoadedAction
+import com.adriangl.pokeapi_mvvm.pokemonlist.PokemonListItem
+import com.adriangl.pokeapi_mvvm.utils.injection.bindStore
 import mini.Reducer
 import mini.Store
 import mini.Task
@@ -11,8 +13,7 @@ import mini.Task
 data class PokeState(
     val pokemonList: List<Pokemon>? = null,
     val pokemonListTask: Task = Task.idle(),
-    val searchQuery: String? = null,
-    val filteredPokemonList: List<Pokemon>? = null
+    val filter: (PokemonListItem) -> Boolean = { true }
 )
 
 class PokeStore(private val pokeController: PokeController) : Store<PokeState>() {
@@ -29,8 +30,7 @@ class PokeStore(private val pokeController: PokeController) : Store<PokeState>()
         setState(
             state.copy(
                 pokemonList = action.pokemonList,
-                pokemonListTask = action.task,
-                filteredPokemonList = action.pokemonList
+                pokemonListTask = action.task
             )
         )
     }
@@ -39,11 +39,7 @@ class PokeStore(private val pokeController: PokeController) : Store<PokeState>()
     fun filterPokemonList(action: FilterPokemonListAction) {
         setState(
             state.copy(
-                searchQuery = action.query,
-                filteredPokemonList = pokeController.filterPokemonList(
-                    state.pokemonList,
-                    action.query
-                )
+                filter = { pokemonListItem -> pokemonListItem.name.contains(action.query) }
             )
         )
     }

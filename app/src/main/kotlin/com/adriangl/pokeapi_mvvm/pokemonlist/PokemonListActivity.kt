@@ -5,11 +5,10 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.adriangl.pokeapi_mvvm.R
 import com.adriangl.pokeapi_mvvm.utils.injection.viewModel
+import com.adriangl.pokeapi_mvvm.utils.observe
 import com.mini.android.toggleViewsVisibility
 import kotlinx.android.synthetic.main.pokemonlist_activity.*
 import mini.onFailure
@@ -21,9 +20,7 @@ import org.kodein.di.android.kodein
 class PokemonListActivity : AppCompatActivity(), KodeinAware {
     override val kodein: Kodein by kodein()
 
-    private val pokemonListViewModel: PokemonListViewModel by viewModel()
-    private val pokemonListLiveData: LiveData<PokemonListViewData>
-        get() = pokemonListViewModel.getPokemonListLiveData()
+    val pokemonListViewModel: PokemonListViewModel by viewModel()
 
     private val pokemonListAdapter = PokemonListAdapter()
 
@@ -38,28 +35,25 @@ class PokemonListActivity : AppCompatActivity(), KodeinAware {
         list_recycler.adapter = pokemonListAdapter
 
         search_pokemon_bar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                pokemonListViewModel.filterPokemonList(query)
+            override fun onQueryTextSubmit(query: String): Boolean {
+                pokemonListViewModel.filterList(query)
                 return true
             }
 
-            override fun onQueryTextChange(newText: String?): Boolean {
-                pokemonListViewModel.filterPokemonList(newText)
+            override fun onQueryTextChange(newText: String): Boolean {
+                pokemonListViewModel.filterList(newText)
                 return true
             }
 
         })
 
-        pokemonListLiveData.observe(this, Observer { (resource) ->
-            toggleViewsVisibility(resource, list_content, list_loading, error, View.GONE)
+        pokemonListViewModel.getPokemonListLiveData().observe(this) { viewData ->
+            toggleViewsVisibility(viewData.pokemonListRes, list_content, list_loading, error, View.GONE)
 
-            resource
-                .onSuccess {
-                    pokemonListAdapter.list = it
-                }
+            viewData.pokemonListRes.onSuccess { list -> pokemonListAdapter.list = list }
                 .onFailure {
                     Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show()
                 }
-        })
+        }
     }
 }

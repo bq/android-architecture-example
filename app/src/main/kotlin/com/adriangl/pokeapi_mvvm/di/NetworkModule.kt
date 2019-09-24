@@ -27,7 +27,7 @@ val networkModule = Kodein.Module("network") {
             .writeTimeout(60, TimeUnit.SECONDS)
             .cache(Cache(context.cacheDir, cacheSize))
             .addInterceptor(HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BODY
+                level = HttpLoggingInterceptor.Level.NONE
             })
             .build()
     }

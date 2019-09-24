@@ -62,7 +62,6 @@ class PokemonListActivityTest : MoveFixtures {
         val viewModel = PokemonListViewModel(app)
         injectTestDependencies(viewModel)
 
-
         val itemList = listOf(
             PokemonListItem(
                 "Agumon",
@@ -72,9 +71,7 @@ class PokemonListActivityTest : MoveFixtures {
             )
         )
 
-        // We have to use postValue instead of setValue because we can't set a value when there's
-        // no available observers
-        viewModel.getPokemonListLiveData().postValue(
+        viewModel.getPokemonMutableLiveData().postValue(
             PokemonListViewData(
                 Resource.success(itemList)
             )
@@ -100,7 +97,6 @@ class PokemonListActivityTest : MoveFixtures {
                     move4.containsText(itemList[0].currentMoves[3].name)
                 }
             }
-
         }
     }
 
@@ -126,11 +122,7 @@ class PokemonListActivityTest : MoveFixtures {
 
         // We have to use postValue instead of setValue because we can't set a value when there's
         // no available observers
-        viewModel.getPokemonListLiveData().postValue(
-            PokemonListViewData(
-                Resource.success(itemList)
-            )
-        )
+        viewModel.getPokemonMutableLiveData().postValue(PokemonListViewData(Resource.success(itemList)))
 
         testActivity.launchActivity(Intent())
 
@@ -153,7 +145,6 @@ class PokemonListActivityTest : MoveFixtures {
                     number.hasText(itemList[1].number.toString())
                 }
             }
-
         }
     }
 
