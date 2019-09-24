@@ -10,6 +10,7 @@ import com.adriangl.pokeapi_mvvm.network.Pokemon
 import com.adriangl.pokeapi_mvvm.network.PokemonMove
 import com.adriangl.pokeapi_mvvm.pokemon.PokeState
 import com.adriangl.pokeapi_mvvm.pokemon.PokeStore
+import com.adriangl.pokeapi_mvvm.utils.extensions.valuesList
 import com.adriangl.pokeapi_mvvm.utils.injection.bindViewModel
 import com.adriangl.pokeapi_mvvm.utils.mini.mergeListStates
 import com.adriangl.pokeapi_mvvm.utils.mini.viewmodel.RxAndroidViewModel
@@ -33,7 +34,7 @@ class PokemonListViewModel(app: Application) : RxAndroidViewModel(app), KodeinAw
     init {
         mergeListStates<Task> {
             mergeList(pokeStore, Task.idle()) { listOf(pokemonListTask) }
-            mergeList(movesStore, Task.idle()) { movesMapTask.values.toList() }
+            mergeList(movesStore, Task.idle()) { movesMapTask.valuesList() }
         }.select { taskList ->
             PokemonListViewData.from(taskList, pokeStore.state, movesStore.state)
         }.subscribe {

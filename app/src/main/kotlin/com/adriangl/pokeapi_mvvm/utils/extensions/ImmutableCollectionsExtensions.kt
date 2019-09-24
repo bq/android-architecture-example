@@ -19,7 +19,6 @@ fun <T> List<T>.replace(replacement: T, predicate: (T) -> Boolean): List<T> {
 }
 
 
-
 /**
  * Replace the item with the given key if the item is different from null. Returns the same map instance if the value is null.
  */
@@ -90,4 +89,10 @@ fun <K, V> Map<K, V>.putFirst(key: K, value: V): Map<K, V> =
 /**
  * Map a not null filtered [Iterable]
  */
-fun <T : Any, R> Iterable<T?>.filterNotNullMap(transform: (T) -> R): List<R> = filterNotNull().map(transform)
+fun <T : Any, R> Iterable<T?>.filterNotNullMap(transform: (T) -> R): List<R> =
+    filterNotNull().map(transform)
+
+/**
+ * Returns all values in a list.
+ */
+fun <K, V> Map<K, V>.valuesList() = values.toList()
