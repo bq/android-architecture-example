@@ -44,6 +44,7 @@ class PokemonListScreen : Screen<PokemonListScreen>() {
 }
 
 class PokemonListActivityTest {
+
     @get:Rule
     val testActivity = testActivity(clazz = PokemonListActivity::class, launchActivity = false)
 
@@ -65,9 +66,7 @@ class PokemonListActivityTest {
             )
         )
 
-        // We have to use postValue instead of setValue because we can't set a value when there's
-        // no available observers
-        viewModel.getPokemonListLiveData().postValue(
+        viewModel.getPokemonMutableLiveData().postValue(
             PokemonListViewData(
                 Resource.success(itemList)
             )
@@ -88,7 +87,6 @@ class PokemonListActivityTest {
                     number.hasText(itemList[0].number.toString())
                 }
             }
-
         }
     }
 
@@ -112,11 +110,7 @@ class PokemonListActivityTest {
 
         // We have to use postValue instead of setValue because we can't set a value when there's
         // no available observers
-        viewModel.getPokemonListLiveData().postValue(
-            PokemonListViewData(
-                Resource.success(itemList)
-            )
-        )
+        viewModel.getPokemonMutableLiveData().postValue(PokemonListViewData(Resource.success(itemList)))
 
         testActivity.launchActivity(Intent())
 
@@ -139,7 +133,6 @@ class PokemonListActivityTest {
                     number.hasText(itemList[1].number.toString())
                 }
             }
-
         }
     }
 
