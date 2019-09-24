@@ -42,7 +42,7 @@ class PokeControllerImpl(
     override fun getPokemonDetailsList() {
         GlobalScope.launch {
             try {
-                val pokemonResourceList = pokeApi.getPokemonList(1000, 0)
+                val pokemonResourceList = pokeApi.getPokemonList(10, 0)
                 val pokemonList = pokemonResourceList.results.map { result ->
                     async {
                         val pokeName = result.name

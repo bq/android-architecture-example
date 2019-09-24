@@ -236,7 +236,11 @@ data class PokemonMove(
     val target: Target,
     @Json(name = "type")
     val type: MoveType
-)
+){
+    override fun toString(): String {
+        return "Move(name = $name)"
+    }
+}
 
 @JsonClass(generateAdapter = true)
 data class ContestEffect(
