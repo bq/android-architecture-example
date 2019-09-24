@@ -1,4 +1,4 @@
-package com.adriangl.pokeapi_mvvm.utils.mini
+package com.adriangl.pokeapi_mvvm.utils.mini.rx
 
 import io.reactivex.Flowable
 import mini.Store

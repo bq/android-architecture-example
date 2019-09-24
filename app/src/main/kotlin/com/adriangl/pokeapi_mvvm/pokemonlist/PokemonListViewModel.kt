@@ -14,7 +14,7 @@ import com.adriangl.pokeapi_mvvm.pokemon.PokeState
 import com.adriangl.pokeapi_mvvm.pokemon.PokeStore
 import com.adriangl.pokeapi_mvvm.utils.extensions.valuesList
 import com.adriangl.pokeapi_mvvm.utils.injection.bindViewModel
-import com.adriangl.pokeapi_mvvm.utils.mini.mergeListStates
+import com.adriangl.pokeapi_mvvm.utils.mini.rx.mergeListStates
 import com.adriangl.pokeapi_mvvm.utils.mini.viewmodel.RxAndroidViewModel
 import mini.*
 import mini.rx.flowable
@@ -81,7 +81,7 @@ class PokemonListViewModel(app: Application) : RxAndroidViewModel(app), KodeinAw
     }
 
     fun filterList(query: String) {
-        dispatcher.dispatchAsync(FilterPokemonListAction(query))
+        dispatcher.dispatch(FilterPokemonListAction(query))
     }
 }
 
