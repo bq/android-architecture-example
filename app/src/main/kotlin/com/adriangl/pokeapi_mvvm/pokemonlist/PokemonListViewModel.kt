@@ -32,7 +32,7 @@ class PokemonListViewModel(app: Application) : RxAndroidViewModel(app), KodeinAw
 
     init {
         mergeListStates<Task> {
-            mergeList(pokeStore, Task.idle()) { listOf(pokemonTask) }
+            mergeList(pokeStore, Task.idle()) { listOf(pokemonListTask) }
             mergeList(movesStore, Task.idle()) { movesMapTask.values.toList() }
         }.select { taskList ->
             PokemonListViewData.from(taskList, pokeStore.state, movesStore.state)
@@ -41,7 +41,7 @@ class PokemonListViewModel(app: Application) : RxAndroidViewModel(app), KodeinAw
         }.track()
 
         pokeStore.flowable()
-            .select { it.pokemonTask }
+            .select { it.pokemonListTask }
             .subscribe {
                 if (it.isSuccess) {
                     val movesList = pokeStore.state.pokemonList!!
