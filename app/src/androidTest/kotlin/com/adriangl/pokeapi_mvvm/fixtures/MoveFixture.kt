@@ -45,7 +45,7 @@ interface MoveFixtures {
                 name = "Swords-dance",
                 type = baseMove.type.copy(name = "Normal")
             ),
-            baseMove.copy(name = "Cur", type = baseMove.type.copy(name = "Normal")),
+            baseMove.copy(name = "Cut", type = baseMove.type.copy(name = "Normal")),
             baseMove.copy(
                 name = "Bind", type = baseMove.type.copy(name = "Normal")
             )
