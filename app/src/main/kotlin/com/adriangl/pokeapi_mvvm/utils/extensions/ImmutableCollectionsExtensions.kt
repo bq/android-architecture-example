@@ -18,6 +18,18 @@ fun <T> List<T>.replace(replacement: T, predicate: (T) -> Boolean): List<T> {
     }
 }
 
+
+
+/**
+ * Replace the item with the given key if the item is different from null. Returns the same map instance if the value is null.
+ */
+fun <K, V> Map<K, V>.replaceIfNotNull(key: K, value: V?): Map<K, V> {
+    if (value == null) return this
+    val mutable = this.toMutableMap()
+    mutable[key] = value
+    return mutable
+}
+
 /**
  * Replace the item in the given position.
  */

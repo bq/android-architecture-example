@@ -4,14 +4,9 @@ import com.adriangl.pokeapi_mvvm.network.Pokemon
 import com.adriangl.pokeapi_mvvm.pokemonlist.FilterPokemonListAction
 import com.adriangl.pokeapi_mvvm.pokemonlist.GetPokemonDetailsListAction
 import com.adriangl.pokeapi_mvvm.pokemonlist.PokemonDetailsListLoadedAction
-import com.adriangl.pokeapi_mvvm.utils.injection.bindStore
 import mini.Reducer
 import mini.Store
 import mini.Task
-import org.kodein.di.Kodein
-import org.kodein.di.generic.bind
-import org.kodein.di.generic.instance
-import org.kodein.di.generic.singleton
 
 data class PokeState(
     val pokemonList: List<Pokemon>? = null,
@@ -50,16 +45,6 @@ class PokeStore(private val pokeController: PokeController) : Store<PokeState>()
                     action.query
                 )
             )
-        )
-    }
-}
-
-val pokeStoreModule = Kodein.Module("pokeStore") {
-    bindStore { PokeStore(instance()) }
-    bind<PokeController>() with singleton {
-        PokeControllerImpl(
-            instance(),
-            instance()
         )
     }
 }

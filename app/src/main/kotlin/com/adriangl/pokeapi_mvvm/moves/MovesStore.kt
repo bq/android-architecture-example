@@ -3,14 +3,9 @@ package com.adriangl.pokeapi_mvvm.moves
 import com.adriangl.pokeapi_mvvm.network.MoveName
 import com.adriangl.pokeapi_mvvm.network.PokemonMove
 import com.adriangl.pokeapi_mvvm.utils.extensions.replace
-import com.adriangl.pokeapi_mvvm.utils.injection.bindStore
 import mini.Reducer
 import mini.Store
 import mini.Task
-import org.kodein.di.Kodein
-import org.kodein.di.generic.bind
-import org.kodein.di.generic.instance
-import org.kodein.di.generic.singleton
 
 data class MovesState(
     val movesMap: Map<MoveName, PokemonMove> = emptyMap(),
@@ -59,16 +54,5 @@ class MovesStore(private val movesController: MovesController) : Store<MovesStat
             }
         }
 
-    }
-
-}
-
-val movesStoreModule = Kodein.Module("movesStore") {
-    bindStore { MovesStore(instance()) }
-    bind<MovesController>() with singleton {
-        MovesControllerImpl(
-            instance(),
-            instance()
-        )
     }
 }

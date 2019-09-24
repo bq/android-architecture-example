@@ -4,11 +4,7 @@ import android.app.Application
 import android.util.Log
 import androidx.annotation.RestrictTo
 import androidx.lifecycle.ViewModelProvider
-import com.adriangl.pokeapi_mvvm.di.networkModule
-import com.adriangl.pokeapi_mvvm.di.storeModule
-import com.adriangl.pokeapi_mvvm.di.utilsModule
-import com.adriangl.pokeapi_mvvm.moves.movesStoreModule
-import com.adriangl.pokeapi_mvvm.pokemon.pokeStoreModule
+import com.adriangl.pokeapi_mvvm.di.*
 import com.adriangl.pokeapi_mvvm.pokemonlist.pokemonListViewModelModule
 import com.adriangl.pokeapi_mvvm.utils.injection.KodeinViewModelFactory
 import mini.Dispatcher
