@@ -3,6 +3,7 @@ package com.adriangl.pokeapi_mvvm.moves
 import com.adriangl.pokeapi_mvvm.network.MoveName
 import com.adriangl.pokeapi_mvvm.network.PokemonMove
 import com.adriangl.pokeapi_mvvm.utils.extensions.replace
+import com.adriangl.pokeapi_mvvm.utils.extensions.replaceIfNotNull
 import mini.Reducer
 import mini.Store
 import mini.Task
@@ -32,27 +33,11 @@ class MovesStore(private val movesController: MovesController) : Store<MovesStat
 
     @Reducer
     fun onMovesLoadedAction(action: MoveLoadedAction) {
-        if (action.task.isSuccess) {
-            val newMovesMap = state.movesMap.replace(action.moveName, action.pokemonMove!!)
-            val mewMovesTask = state.movesMapTask.replace(action.moveName, Task.success())
-
-            setState(
-                state.copy(
-                    movesMap = newMovesMap,
-                    movesMapTask = mewMovesTask
-                )
+        setState(
+            state.copy(
+                movesMap = state.movesMap.replaceIfNotNull(action.moveName, action.pokemonMove),
+                movesMapTask = state.movesMapTask.replace(action.moveName, action.task)
             )
-        } else {
-            if (action.task.isFailure) {
-                val mewMovesTask = state.movesMapTask.replace(action.moveName, Task.failure())
-
-                setState(
-                    state.copy(
-                        movesMapTask = mewMovesTask
-                    )
-                )
-            }
-        }
-
+        )
     }
 }
