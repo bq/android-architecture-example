@@ -114,13 +114,15 @@ data class PokemonListViewData(val pokemonListRes: Resource<List<PokemonListItem
 
             return when {
                 taskList.allSuccesful() -> {
-                    val pokemonWithMovements = pokeState.pokemonList!!.map { pokemon ->
-                        val moveList = pokemon.moves.subList(0, 4.coerceAtMost(pokemon.moves.size)).map {
-                            movesState.movesMap.getValue(it.move.name)
-                        }
+                    val pokemonWithMovements = pokeState.pokemonList!!
+                        .map { pokemon ->
+                            val moveList =
+                                pokemon.moves.subList(0, 4.coerceAtMost(pokemon.moves.size)).map {
+                                    movesState.movesMap.getValue(it.move.name)
+                                }
+                            PokemonListItem.from(pokemon, moveList)
+                        }.filter(pokeState.filter)
 
-                        PokemonListItem.from(pokemon, moveList)
-                    }
                     PokemonListViewData(Resource.success(pokemonWithMovements))
                 }
                 taskList.anyFailure() -> {
@@ -132,8 +134,6 @@ data class PokemonListViewData(val pokemonListRes: Resource<List<PokemonListItem
             }
         }
     }
-
-
 }
 
 val pokemonListViewModelModule = Kodein.Module("pokemonListViewModelModule", true) {

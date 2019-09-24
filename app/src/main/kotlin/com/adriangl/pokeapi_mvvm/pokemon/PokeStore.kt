@@ -5,7 +5,6 @@ import com.adriangl.pokeapi_mvvm.pokemonlist.FilterPokemonListAction
 import com.adriangl.pokeapi_mvvm.pokemonlist.GetPokemonDetailsListAction
 import com.adriangl.pokeapi_mvvm.pokemonlist.PokemonDetailsListLoadedAction
 import com.adriangl.pokeapi_mvvm.pokemonlist.PokemonListItem
-import com.adriangl.pokeapi_mvvm.utils.injection.bindStore
 import mini.Reducer
 import mini.Store
 import mini.Task
