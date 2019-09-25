@@ -62,7 +62,7 @@ inline fun <reified T> Fragment.argument(key: String, defaultValue: T): Lazy<T> 
  */
 inline fun <reified T> Fragment.optionalArgument(key: String): Lazy<T?> = lazy {
     try {
-        arguments?.get(key) as? T
+        arguments?.get(key) as T?
     } catch (e: ClassCastException) {
         throw FragmentArgumentException("Argument $key cannot be cast to class ${T::class.qualifiedName}")
     }

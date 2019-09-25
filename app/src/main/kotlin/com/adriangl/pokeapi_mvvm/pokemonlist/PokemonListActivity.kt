@@ -20,7 +20,7 @@ import org.kodein.di.android.kodein
 class PokemonListActivity : AppCompatActivity(), KodeinAware {
     override val kodein: Kodein by kodein()
 
-    val pokemonListViewModel: PokemonListViewModel by viewModel()
+    val pokemonListViewModel: PokemonListViewModel by this.viewModel()
 
     private val pokemonListAdapter = PokemonListAdapter()
 
@@ -32,7 +32,6 @@ class PokemonListActivity : AppCompatActivity(), KodeinAware {
             adapter = pokemonListAdapter
             layoutManager = LinearLayoutManager(this@PokemonListActivity)
         }
-        list_recycler.adapter = pokemonListAdapter
 
         search_pokemon_bar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
@@ -44,8 +43,9 @@ class PokemonListActivity : AppCompatActivity(), KodeinAware {
                 pokemonListViewModel.filterList(newText)
                 return true
             }
-
         })
+
+        pokemonListViewModel.setup()
 
         pokemonListViewModel.getPokemonListLiveData().observe(this) { viewData ->
             toggleViewsVisibility(viewData.pokemonListRes, list_content, list_loading, error, View.GONE)

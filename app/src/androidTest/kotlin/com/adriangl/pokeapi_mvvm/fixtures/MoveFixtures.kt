@@ -20,7 +20,7 @@ interface MoveFixtures {
             effectChanges = null,
             effectEntries = emptyList(),
             flavorTextEntries = emptyList(),
-            generation = Generation("any", "http:://example.com"),
+            generation = Generation("any", "http://example.com"),
             machines = null,
             meta = null,
             name = "Base",
@@ -35,7 +35,7 @@ interface MoveFixtures {
                 "any",
                 "http:://example.com"
             ),
-            type = MoveType("Normal", "http:://example.com")
+            type = MoveType("Normal", "http://example.com")
         )
 
     fun anyMoveList() =

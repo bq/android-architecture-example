@@ -12,6 +12,7 @@ import com.adriangl.pokeapi_mvvm.network.Pokemon
 import com.adriangl.pokeapi_mvvm.network.PokemonMove
 import com.adriangl.pokeapi_mvvm.pokemon.PokeState
 import com.adriangl.pokeapi_mvvm.pokemon.PokeStore
+import com.adriangl.pokeapi_mvvm.utils.EmptyConfigurable
 import com.adriangl.pokeapi_mvvm.utils.extensions.valuesList
 import com.adriangl.pokeapi_mvvm.utils.injection.bindViewModel
 import com.adriangl.pokeapi_mvvm.utils.mini.rx.mergeListStates
@@ -24,7 +25,7 @@ import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.closestKodein
 import org.kodein.di.generic.instance
 
-class PokemonListViewModel(app: Application) : RxAndroidViewModel(app), KodeinAware {
+class PokemonListViewModel(app: Application) : RxAndroidViewModel(app), KodeinAware, EmptyConfigurable {
     override val kodein by closestKodein()
 
     private val pokeStore: PokeStore by instance()
@@ -33,7 +34,7 @@ class PokemonListViewModel(app: Application) : RxAndroidViewModel(app), KodeinAw
 
     private val pokemonListLiveData = MutableLiveData<PokemonListViewData>()
 
-    init {
+    override fun setup() {
         mergeListStates<Task> {
             mergeList(pokeStore, Task.idle()) { listOf(pokemonListTask) }
             mergeList(movesStore, Task.idle()) { movesMapTask.valuesList() }
@@ -48,10 +49,10 @@ class PokemonListViewModel(app: Application) : RxAndroidViewModel(app), KodeinAw
             .subscribe {
                 if (it.isSuccess) {
                     val movesList = pokeStore.state.pokemonList!!
-                        .flatMap {
-                            it.moves.subList(0, 4.coerceAtMost(it.moves.size))
-                        } // Only 4 movements
-                        .distinctBy { it.move.name }.map { it.move.name }
+                        .flatMap { pokemon ->
+                            pokemon.moves.subList(0, 4.coerceAtMost(pokemon.moves.size))
+                        } // At most 4 movements
+                        .map { it.move.name }.distinct()
                     getMoves(movesList)
                 }
             }.track()
@@ -68,10 +69,7 @@ class PokemonListViewModel(app: Application) : RxAndroidViewModel(app), KodeinAw
     fun getPokemonMutableLiveData() = pokemonListLiveData
 
     fun getPokemonDetails() {
-        if (pokemonListLiveData.value == null ||
-            pokemonListLiveData.value!!.pokemonListRes.isEmpty ||
-            pokemonListLiveData.value!!.pokemonListRes.isFailure
-        ) {
+        if (pokeStore.state.pokemonList == null) {
             dispatcher.dispatch(GetPokemonDetailsListAction())
         }
     }
