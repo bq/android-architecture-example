@@ -5,6 +5,7 @@ import android.view.View
 import androidx.lifecycle.ViewModel
 import com.adriangl.pokeapi_mvvm.R
 import com.adriangl.pokeapi_mvvm.app
+import com.adriangl.pokeapi_mvvm.fixtures.MoveFixtures
 import com.adriangl.pokeapi_mvvm.utils.injection.bindViewModel
 import com.adriangl.pokeapi_mvvm.utils.test.testActivity
 import com.adriangl.pokeapi_mvvm.utils.test.testDispatcher
@@ -40,11 +41,14 @@ class PokemonListScreen : Screen<PokemonListScreen>() {
         val sprite: KImageView = KImageView(parent) { withId(R.id.pokemon_sprite) }
         val name: KTextView = KTextView(parent) { withId(R.id.pokemon_name) }
         val number: KTextView = KTextView(parent) { withId(R.id.pokemon_number) }
+        val move1: KTextView = KTextView(parent) { withId(R.id.pokemon_move_1) }
+        val move2: KTextView = KTextView(parent) { withId(R.id.pokemon_move_2) }
+        val move3: KTextView = KTextView(parent) { withId(R.id.pokemon_move_3) }
+        val move4: KTextView = KTextView(parent) { withId(R.id.pokemon_move_4) }
     }
 }
 
-class PokemonListActivityTest {
-
+class PokemonListActivityTest : MoveFixtures {
     @get:Rule
     val testActivity = testActivity(clazz = PokemonListActivity::class, launchActivity = false)
 
@@ -62,7 +66,8 @@ class PokemonListActivityTest {
             PokemonListItem(
                 "Agumon",
                 1,
-                "https://placekitten.com/256/256"
+                "https://placekitten.com/256/256",
+                anyMoveList()
             )
         )
 
@@ -85,6 +90,11 @@ class PokemonListActivityTest {
                     isDisplayed()
                     name.hasText(itemList[0].name)
                     number.hasText(itemList[0].number.toString())
+
+                    move1.containsText(itemList[0].currentMoves[0].name)
+                    move2.containsText(itemList[0].currentMoves[1].name)
+                    move3.containsText(itemList[0].currentMoves[2].name)
+                    move4.containsText(itemList[0].currentMoves[3].name)
                 }
             }
         }
@@ -99,12 +109,14 @@ class PokemonListActivityTest {
             PokemonListItem(
                 "Jibanyan",
                 1,
-                "https://placekitten.com/256/256"
+                "https://placekitten.com/256/256",
+                anyMoveList()
             ),
             PokemonListItem(
                 "Mocchi",
                 2,
-                "https://placekitten.com/256/256"
+                "https://placekitten.com/256/256",
+                anyMoveList()
             )
         )
 
@@ -145,3 +157,4 @@ class PokemonListActivityTest {
         app.initializeInjection()
     }
 }
+

@@ -2,6 +2,7 @@ package com.adriangl.pokeapi_mvvm.pokemonlist
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -10,6 +11,7 @@ import com.adriangl.pokeapi_mvvm.utils.injection.viewModel
 import com.adriangl.pokeapi_mvvm.utils.observe
 import com.mini.android.toggleViewsVisibility
 import kotlinx.android.synthetic.main.pokemonlist_activity.*
+import mini.onFailure
 import mini.onSuccess
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -49,6 +51,9 @@ class PokemonListActivity : AppCompatActivity(), KodeinAware {
             toggleViewsVisibility(viewData.pokemonListRes, list_content, list_loading, error, View.GONE)
 
             viewData.pokemonListRes.onSuccess { list -> pokemonListAdapter.list = list }
+                .onFailure {
+                    Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show()
+                }
         }
     }
 }
