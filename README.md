@@ -1,4 +1,4 @@
-# PokeApiMiniMVVM
+# Android architecture example
 Sample illustrating the use of modern Android architectures and components.
 
 Interesting articles and repositories:
