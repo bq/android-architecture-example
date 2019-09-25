@@ -60,7 +60,7 @@ inline fun <reified T> Activity.argument(key: String, defaultValue: T): Lazy<T> 
  */
 inline fun <reified T> Activity.optionalArgument(key: String): Lazy<T?> = lazy {
     try {
-        intent?.extras?.get(key) as? T
+        intent?.extras?.get(key) as T?
     } catch (e: ClassCastException) {
         throw ActivityArgumentException("Argument $key cannot be cast to class ${T::class.qualifiedName}")
     }

@@ -12,6 +12,7 @@ import mini.Task
 data class PokeState(
     val pokemonList: List<Pokemon>? = null,
     val pokemonListTask: Task = Task.idle(),
+    val pokemontask2:Task = Task.idle(),
     val filter: (PokemonListItem) -> Boolean = { true }
 )
 

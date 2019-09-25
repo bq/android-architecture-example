@@ -116,7 +116,6 @@ dependencies {
     androidTestImplementation "androidx.test.espresso:espresso-contrib:$espresso_version"
     androidTestImplementation "androidx.test.espresso:espresso-intents:$espresso_version"
     androidTestImplementation "androidx.test.espresso:espresso-web:$espresso_version"
-    androidTestImplementation "com.google.code.gson:gson:2.8.5"
 
     //Using jUnit5 in unit tests
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.4.0'
