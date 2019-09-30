@@ -7,6 +7,6 @@ import mini.Task
 
 class GetPokemonDetailsListAction : BaseAction()
 
-data class PokemonDetailsListLoadedAction(val pokemonList: List<Pokemon>?, val task: Task)
+data class PokemonDetailsListLoadedAction(val pokemonList: List<Pokemon>?, val task: Task) : BaseAction()
 
 data class FilterPokemonListAction(val query: String) : BaseAction()

@@ -20,7 +20,7 @@ import org.kodein.di.android.kodein
 class PokemonListActivity : AppCompatActivity(), KodeinAware {
     override val kodein: Kodein by kodein()
 
-    val pokemonListViewModel: PokemonListViewModel by this.viewModel()
+    val pokemonListViewModel: PokemonListViewModel by viewModel()
 
     private val pokemonListAdapter = PokemonListAdapter()
 

@@ -55,10 +55,12 @@ dependencies {
     implementation "org.kodein.di:kodein-di-framework-android-x:$kodein_version"
     implementation "org.kodein.di:kodein-di-conf-jvm:$kodein_version"
 
-    def mini_version = "4.0.3"
-    implementation "com.github.minikorp.mini:mini-android:$mini_version"
-    testImplementation "com.github.minikorp.mini:mini-android-testing:3.0.7" // Not available in v4
-    kapt "com.github.minikorp.mini:mini-processor:$mini_version"
+    def mini_version = "febeeeb0cf"
+    implementation "com.github.bq.mini-kotlin:mini-android:$mini_version"
+    implementation "com.github.bq.mini-kotlin:mini-rx2:$mini_version"
+    implementation "com.github.bq.mini-kotlin:mini-rx2-android:$mini_version"
+    //testImplementation "com.github.bq.mini:mini-android-testing:3.0.7" // Not available in v4
+    kapt "com.github.bq.mini-kotlin:mini-processor:$mini_version"
 
     implementation 'com.google.android.material:material:1.0.0'
     implementation "androidx.recyclerview:recyclerview:1.1.0-beta04"

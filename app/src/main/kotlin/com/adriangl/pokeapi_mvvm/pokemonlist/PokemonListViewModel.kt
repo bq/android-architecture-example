@@ -15,10 +15,10 @@ import com.adriangl.pokeapi_mvvm.pokemon.PokeStore
 import com.adriangl.pokeapi_mvvm.utils.EmptyConfigurable
 import com.adriangl.pokeapi_mvvm.utils.extensions.valuesList
 import com.adriangl.pokeapi_mvvm.utils.injection.bindViewModel
-import com.adriangl.pokeapi_mvvm.utils.mini.rx.mergeListStates
-import com.adriangl.pokeapi_mvvm.utils.mini.viewmodel.RxAndroidViewModel
 import mini.*
+import mini.rx.android.viewmodels.RxAndroidViewModel
 import mini.rx.flowable
+import mini.rx.mergeListStates
 import mini.rx.select
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
