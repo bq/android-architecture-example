@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import com.adriangl.pokeapi_mvvm.R
 import com.adriangl.pokeapi_mvvm.app
 import com.adriangl.pokeapi_mvvm.fixtures.MoveFixtures
-import com.adriangl.pokeapi_mvvm.utils.injection.bindViewModel
 import com.adriangl.pokeapi_mvvm.utils.test.testActivity
 import com.agoda.kakao.common.views.KView
 import com.agoda.kakao.image.KImageView
@@ -16,6 +15,7 @@ import com.agoda.kakao.screen.Screen
 import com.agoda.kakao.screen.Screen.Companion.onScreen
 import com.agoda.kakao.text.KTextView
 import mini.Resource
+import mini.kodein.android.bindViewModel
 import mini.testing.TestDispatcherRule
 import org.hamcrest.Matcher
 import org.junit.Before

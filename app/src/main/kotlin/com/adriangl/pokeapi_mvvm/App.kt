@@ -6,11 +6,11 @@ import androidx.annotation.RestrictTo
 import androidx.lifecycle.ViewModelProvider
 import com.adriangl.pokeapi_mvvm.di.*
 import com.adriangl.pokeapi_mvvm.pokemonlist.pokemonListViewModelModule
-import com.adriangl.pokeapi_mvvm.utils.injection.KodeinViewModelFactory
 import mini.Dispatcher
 import mini.LoggerInterceptor
 import mini.MiniGen
 import mini.Store
+import mini.kodein.android.KodeinViewModelFactory
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.conf.ConfigurableKodein

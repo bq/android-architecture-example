@@ -7,10 +7,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.adriangl.pokeapi_mvvm.R
-import com.adriangl.pokeapi_mvvm.utils.injection.viewModel
 import com.adriangl.pokeapi_mvvm.utils.observe
 import com.mini.android.toggleViewsVisibility
 import kotlinx.android.synthetic.main.pokemonlist_activity.*
+import mini.kodein.android.viewModel
 import mini.onFailure
 import mini.onSuccess
 import org.kodein.di.Kodein

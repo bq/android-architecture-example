@@ -6,8 +6,8 @@ import com.adriangl.pokeapi_mvvm.moves.MovesStore
 import com.adriangl.pokeapi_mvvm.pokemon.PokeController
 import com.adriangl.pokeapi_mvvm.pokemon.PokeControllerImpl
 import com.adriangl.pokeapi_mvvm.pokemon.PokeStore
-import com.adriangl.pokeapi_mvvm.utils.injection.bindStore
 import mini.Store
+import mini.kodein.bindStore
 import org.kodein.di.Kodein
 import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance

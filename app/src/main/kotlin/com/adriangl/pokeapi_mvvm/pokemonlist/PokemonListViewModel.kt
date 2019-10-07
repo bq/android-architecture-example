@@ -14,8 +14,8 @@ import com.adriangl.pokeapi_mvvm.pokemon.PokeState
 import com.adriangl.pokeapi_mvvm.pokemon.PokeStore
 import com.adriangl.pokeapi_mvvm.utils.EmptyConfigurable
 import com.adriangl.pokeapi_mvvm.utils.extensions.valuesList
-import com.adriangl.pokeapi_mvvm.utils.injection.bindViewModel
 import mini.*
+import mini.kodein.android.bindViewModel
 import mini.rx.android.viewmodels.RxAndroidViewModel
 import mini.rx.flowable
 import mini.rx.mergeStates
