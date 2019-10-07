@@ -26,6 +26,7 @@ val app: App get() = appInstance
 private val dispatcher = MiniGen.newDispatcher()
 
 class App : Application(), KodeinAware {
+    private val _kodein = Kodein {}
     override val kodein = ConfigurableKodein(mutable = true)
 
     private var testModule: Kodein.Module? = null
@@ -58,13 +59,13 @@ class App : Application(), KodeinAware {
 
         with(kodein) {
             // First, add all dependencies
-            addImport(appModule, true)
-            addImport(storeModule, true)
-            addImport(utilsModule, true)
-            addImport(networkModule, true)
-            addImport(pokeStoreModule, true)
-            addImport(movesStoreModule, true)
-            addImport(pokemonListViewModelModule, true)
+            addImport(appModule)
+            addImport(storeModule)
+            addImport(utilsModule)
+            addImport(networkModule)
+            addImport(pokeStoreModule)
+            addImport(movesStoreModule)
+            addImport(pokemonListViewModelModule)
 
             if (testModule != null) addImport(testModule!!, true)
         }
@@ -94,7 +95,7 @@ class App : Application(), KodeinAware {
     }
 }
 
-val appModule = Kodein.Module("app", true) {
+val appModule = Kodein.Module("app") {
     bind<Application>() with singleton { app }
     bind<Dispatcher>() with singleton { dispatcher }
 

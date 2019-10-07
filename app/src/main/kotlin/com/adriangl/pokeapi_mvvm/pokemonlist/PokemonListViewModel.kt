@@ -133,6 +133,6 @@ data class PokemonListViewData(val pokemonListRes: Resource<List<PokemonListItem
     }
 }
 
-val pokemonListViewModelModule = Kodein.Module("pokemonListViewModelModule", true) {
+val pokemonListViewModelModule = Kodein.Module("pokemonListViewModelModule") {
     bindViewModel { PokemonListViewModel(instance()) }
 }
