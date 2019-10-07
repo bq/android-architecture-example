@@ -23,6 +23,7 @@ import kotlin.properties.Delegates
 
 private var appInstance: App by Delegates.notNull()
 val app: App get() = appInstance
+private val dispatcher = MiniGen.newDispatcher()
 
 class App : Application(), KodeinAware {
     override val kodein = ConfigurableKodein(mutable = true)
@@ -95,7 +96,7 @@ class App : Application(), KodeinAware {
 
 val appModule = Kodein.Module("app", true) {
     bind<Application>() with singleton { app }
-    bind<Dispatcher>() with singleton { MiniGen.newDispatcher() }
+    bind<Dispatcher>() with singleton { dispatcher }
 
     bind<ViewModelProvider.Factory>() with singleton {
         KodeinViewModelFactory(

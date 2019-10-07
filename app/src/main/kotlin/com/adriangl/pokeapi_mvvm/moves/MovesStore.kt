@@ -10,20 +10,20 @@ import mini.Task
 
 data class MovesState(
     val movesMap: Map<MoveName, PokemonMove> = emptyMap(),
-    val movesMapTask: Map<MoveName, Task> = emptyMap()
+    val movesTaskMap: Map<MoveName, Task> = emptyMap()
 )
 
 class MovesStore(private val movesController: MovesController) : Store<MovesState>() {
 
     @Reducer
     fun getMove(action: LoadMovesAction) {
-        var newMovesMapTask = state.movesMapTask
+        var newMovesTaskMap = state.movesTaskMap
         action.moveNameList.forEach { moveName ->
-            newMovesMapTask = newMovesMapTask.replace(moveName, Task.loading())
+            newMovesTaskMap = newMovesTaskMap.replace(moveName, Task.loading())
         }
         setState(
             state.copy(
-                movesMapTask = newMovesMapTask
+                movesTaskMap = newMovesTaskMap
             )
         )
         action.moveNameList.forEach { moveName ->
@@ -36,7 +36,7 @@ class MovesStore(private val movesController: MovesController) : Store<MovesStat
         setState(
             state.copy(
                 movesMap = state.movesMap.replaceIfNotNull(action.moveName, action.pokemonMove),
-                movesMapTask = state.movesMapTask.replace(action.moveName, action.task)
+                movesTaskMap = state.movesTaskMap.replace(action.moveName, action.task)
             )
         )
     }

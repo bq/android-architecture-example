@@ -18,7 +18,7 @@ import com.adriangl.pokeapi_mvvm.utils.injection.bindViewModel
 import mini.*
 import mini.rx.android.viewmodels.RxAndroidViewModel
 import mini.rx.flowable
-import mini.rx.mergeListStates
+import mini.rx.mergeStates
 import mini.rx.select
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -35,11 +35,11 @@ class PokemonListViewModel(app: Application) : RxAndroidViewModel(app), KodeinAw
     private val pokemonListLiveData = MutableLiveData<PokemonListViewData>()
 
     override fun setup() {
-        mergeListStates<Task> {
-            mergeList(pokeStore, Task.idle()) { listOf(pokemonListTask) }
-            mergeList(movesStore, Task.idle()) { movesMapTask.valuesList() }
-        }.select { taskList ->
-            PokemonListViewData.from(taskList, pokeStore.state, movesStore.state)
+        mergeStates<Any> {
+            merge(pokeStore) { this } // change merge to inline fun <S : Store<U>, U : Any> merge(store: S, crossinline mapper: (U.() -> R) = { this as R }) {
+            merge(movesStore) { this }
+        }.select {
+            PokemonListViewData.from(pokeStore.state, movesStore.state)
         }.subscribe {
             pokemonListLiveData.postValue(it)
         }.track()
@@ -104,11 +104,10 @@ data class PokemonListItem(
 data class PokemonListViewData(val pokemonListRes: Resource<List<PokemonListItem>>) {
 
     companion object {
-        fun from(
-            taskList: List<Task>,
-            pokeState: PokeState,
-            movesState: MovesState
-        ): PokemonListViewData {
+        fun from(pokeState: PokeState, movesState: MovesState): PokemonListViewData {
+            val pokemonListTasks = listOf(pokeState.pokemonListTask)
+            val movesListTasks = movesState.movesTaskMap.valuesList().let { if (it.isEmpty()) listOf(Task.idle()) else it }
+            val taskList = pokemonListTasks + movesListTasks
 
             return when {
                 taskList.allSuccesful() -> {

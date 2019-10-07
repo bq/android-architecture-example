@@ -8,7 +8,6 @@ import com.adriangl.pokeapi_mvvm.app
 import com.adriangl.pokeapi_mvvm.fixtures.MoveFixtures
 import com.adriangl.pokeapi_mvvm.utils.injection.bindViewModel
 import com.adriangl.pokeapi_mvvm.utils.test.testActivity
-import com.adriangl.pokeapi_mvvm.utils.test.testDispatcher
 import com.agoda.kakao.common.views.KView
 import com.agoda.kakao.image.KImageView
 import com.agoda.kakao.recycler.KRecyclerItem
@@ -16,14 +15,15 @@ import com.agoda.kakao.recycler.KRecyclerView
 import com.agoda.kakao.screen.Screen
 import com.agoda.kakao.screen.Screen.Companion.onScreen
 import com.agoda.kakao.text.KTextView
-import mini.Dispatcher
 import mini.Resource
+import mini.testing.TestDispatcherRule
 import org.hamcrest.Matcher
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.kodein.di.generic.bind
-import org.kodein.di.generic.singleton
+import org.junit.rules.RuleChain
+import org.kodein.di.direct
+import org.kodein.di.generic.instance
 
 class PokemonListScreen : Screen<PokemonListScreen>() {
     val loadingView = KView { withId(R.id.list_loading) }
@@ -49,8 +49,13 @@ class PokemonListScreen : Screen<PokemonListScreen>() {
 }
 
 class PokemonListActivityTest : MoveFixtures {
+    val testActivityRule = testActivity(clazz = PokemonListActivity::class, launchActivity = false)
+    val testDispatcherRule = TestDispatcherRule { app.kodein.direct.instance() }
+
     @get:Rule
-    val testActivity = testActivity(clazz = PokemonListActivity::class, launchActivity = false)
+    val ruleChain = RuleChain
+        .outerRule(testDispatcherRule)
+        .around(testActivityRule)
 
     @Before
     fun setup() {
@@ -71,13 +76,13 @@ class PokemonListActivityTest : MoveFixtures {
             )
         )
 
+        testActivityRule.launchActivity(Intent())
+
         viewModel.getPokemonMutableLiveData().postValue(
             PokemonListViewData(
                 Resource.success(itemList)
             )
         )
-
-        testActivity.launchActivity(Intent())
 
         onScreen<PokemonListScreen> {
             loadingView.isNotDisplayed()
@@ -120,11 +125,11 @@ class PokemonListActivityTest : MoveFixtures {
             )
         )
 
+        testActivityRule.launchActivity(Intent())
+
         // We have to use postValue instead of setValue because we can't set a value when there's
         // no available observers
         viewModel.getPokemonMutableLiveData().postValue(PokemonListViewData(Resource.success(itemList)))
-
-        testActivity.launchActivity(Intent())
 
         onScreen<PokemonListScreen> {
             loadingView.isNotDisplayed()
@@ -150,7 +155,7 @@ class PokemonListActivityTest : MoveFixtures {
 
     private inline fun <reified T : ViewModel> injectTestDependencies(viewModel: T) {
         app.setTestModule {
-            bind<Dispatcher>() with singleton { testDispatcher }
+            //bind<Dispatcher>() with singleton { testDispatcher }
             bindViewModel { viewModel }
         }
 
