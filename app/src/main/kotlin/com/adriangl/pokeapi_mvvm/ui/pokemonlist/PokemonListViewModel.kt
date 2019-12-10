@@ -1,26 +1,26 @@
-package com.adriangl.pokeapi_mvvm.pokemonlist
+package com.adriangl.pokeapi_mvvm.ui.pokemonlist
 
 import android.app.Application
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.adriangl.pokeapi_mvvm.moves.LoadMovesAction
-import com.adriangl.pokeapi_mvvm.moves.MovesState
-import com.adriangl.pokeapi_mvvm.moves.MovesStore
+import com.adriangl.pokeapi_mvvm.domain.moves.LoadMovesAction
+import com.adriangl.pokeapi_mvvm.domain.moves.MovesState
+import com.adriangl.pokeapi_mvvm.domain.moves.MovesStore
+import com.adriangl.pokeapi_mvvm.domain.pokemon.FilterPokemonListAction
+import com.adriangl.pokeapi_mvvm.domain.pokemon.GetPokemonDetailsListAction
+import com.adriangl.pokeapi_mvvm.domain.pokemon.PokeState
+import com.adriangl.pokeapi_mvvm.domain.pokemon.PokeStore
 import com.adriangl.pokeapi_mvvm.network.MoveName
 import com.adriangl.pokeapi_mvvm.network.Pokemon
 import com.adriangl.pokeapi_mvvm.network.PokemonMove
-import com.adriangl.pokeapi_mvvm.pokemon.PokeState
-import com.adriangl.pokeapi_mvvm.pokemon.PokeStore
 import com.adriangl.pokeapi_mvvm.utils.EmptyConfigurable
 import com.adriangl.pokeapi_mvvm.utils.extensions.valuesList
 import mini.*
-import mini.kodein.android.bindViewModel
 import mini.rx.android.viewmodels.RxAndroidViewModel
 import mini.rx.flowable
 import mini.rx.mergeStates
 import mini.rx.select
-import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.closestKodein
 import org.kodein.di.generic.instance
@@ -131,8 +131,4 @@ data class PokemonListViewData(val pokemonListRes: Resource<List<PokemonListItem
             }
         }
     }
-}
-
-val pokemonListViewModelModule = Kodein.Module("pokemonListViewModelModule") {
-    bindViewModel { PokemonListViewModel(instance()) }
 }

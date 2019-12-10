@@ -1,4 +1,4 @@
-package com.adriangl.pokeapi_mvvm.moves
+package com.adriangl.pokeapi_mvvm.domain.moves
 
 import com.adriangl.pokeapi_mvvm.network.MoveName
 import com.adriangl.pokeapi_mvvm.network.PokemonMove
@@ -7,6 +7,12 @@ import com.adriangl.pokeapi_mvvm.utils.extensions.replaceIfNotNull
 import mini.Reducer
 import mini.Store
 import mini.Task
+import mini.kodein.bindStore
+import org.kodein.di.Kodein
+import org.kodein.di.generic.bind
+import org.kodein.di.generic.instance
+import org.kodein.di.generic.singleton
+import retrofit2.Retrofit
 
 data class MovesState(
     val movesMap: Map<MoveName, PokemonMove> = emptyMap(),
@@ -39,5 +45,16 @@ class MovesStore(private val movesController: MovesController) : Store<MovesStat
                 movesTaskMap = state.movesTaskMap.replace(action.moveName, action.task)
             )
         )
+    }
+}
+
+object MovesModule {
+    fun create() = Kodein.Module("movesStore") {
+        bindStore { MovesStore(instance()) }
+        bind<MovesController>() with singleton { MovesControllerImpl(instance(), instance()) }
+        bind<MovesApi>() with singleton {
+            val retrofit: Retrofit = instance()
+            retrofit.create(MovesApi::class.java)
+        }
     }
 }

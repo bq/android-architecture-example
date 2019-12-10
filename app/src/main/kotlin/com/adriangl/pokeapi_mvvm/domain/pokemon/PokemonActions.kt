@@ -1,4 +1,4 @@
-package com.adriangl.pokeapi_mvvm.pokemonlist
+package com.adriangl.pokeapi_mvvm.domain.pokemon
 
 import com.adriangl.pokeapi_mvvm.network.Pokemon
 import mini.BaseAction

@@ -4,8 +4,10 @@ import android.app.Application
 import android.util.Log
 import androidx.annotation.RestrictTo
 import androidx.lifecycle.ViewModelProvider
-import com.adriangl.pokeapi_mvvm.di.*
-import com.adriangl.pokeapi_mvvm.pokemonlist.pokemonListViewModelModule
+import com.adriangl.pokeapi_mvvm.domain.moves.MovesModule
+import com.adriangl.pokeapi_mvvm.domain.pokemon.PokeModule
+import com.adriangl.pokeapi_mvvm.network.NetworkModule
+import com.adriangl.pokeapi_mvvm.ui.ViewModelsModule
 import mini.Dispatcher
 import mini.LoggerInterceptor
 import mini.MiniGen
@@ -17,6 +19,7 @@ import org.kodein.di.conf.ConfigurableKodein
 import org.kodein.di.direct
 import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
+import org.kodein.di.generic.setBinding
 import org.kodein.di.generic.singleton
 import java.io.Closeable
 import kotlin.properties.Delegates
@@ -26,7 +29,6 @@ val app: App get() = appInstance
 private val dispatcher = MiniGen.newDispatcher()
 
 class App : Application(), KodeinAware {
-    private val _kodein = Kodein {}
     override val kodein = ConfigurableKodein(mutable = true)
 
     private var testModule: Kodein.Module? = null
@@ -44,8 +46,6 @@ class App : Application(), KodeinAware {
     }
 
     fun initializeInjection() {
-        Log.e("AAA", "Reload dependencies")
-
         // Clear everything
         if (this::storeSubscriptions.isInitialized) {
             storeSubscriptions.close()
@@ -59,13 +59,14 @@ class App : Application(), KodeinAware {
 
         with(kodein) {
             // First, add all dependencies
-            addImport(appModule)
-            addImport(storeModule)
-            addImport(utilsModule)
-            addImport(networkModule)
-            addImport(pokeStoreModule)
-            addImport(movesStoreModule)
-            addImport(pokemonListViewModelModule)
+            addImports(
+                false,
+                AppModule.create(),
+                NetworkModule.create(),
+                PokeModule.create(),
+                MovesModule.create(),
+                ViewModelsModule.create()
+            )
 
             if (testModule != null) addImport(testModule!!, true)
         }
@@ -95,13 +96,21 @@ class App : Application(), KodeinAware {
     }
 }
 
-val appModule = Kodein.Module("app") {
-    bind<Application>() with singleton { app }
-    bind<Dispatcher>() with singleton { dispatcher }
+object AppModule {
+    fun create() = Kodein.Module("app") {
+        bind<Application>() with singleton { app }
+        bind<Dispatcher>() with singleton { dispatcher }
+        bind() from setBinding<Store<*>>()
 
-    bind<ViewModelProvider.Factory>() with singleton {
-        KodeinViewModelFactory(
-            kodein.direct
-        )
+        bind<ViewModelProvider.Factory>() with singleton {
+            KodeinViewModelFactory(
+                kodein.direct
+            )
+        }
     }
+}
+
+
+private fun ConfigurableKodein.addImports(allowOverride: Boolean, vararg moduleInfo: Kodein.Module) {
+    moduleInfo.forEach { addImport(it, allowOverride) }
 }

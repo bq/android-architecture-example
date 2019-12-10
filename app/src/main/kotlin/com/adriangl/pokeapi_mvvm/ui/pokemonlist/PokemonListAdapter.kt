@@ -1,4 +1,4 @@
-package com.adriangl.pokeapi_mvvm.pokemonlist
+package com.adriangl.pokeapi_mvvm.ui.pokemonlist
 
 import android.view.View
 import android.view.ViewGroup

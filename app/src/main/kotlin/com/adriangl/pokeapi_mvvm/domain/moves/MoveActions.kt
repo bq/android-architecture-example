@@ -1,4 +1,4 @@
-package com.adriangl.pokeapi_mvvm.moves
+package com.adriangl.pokeapi_mvvm.domain.moves
 
 import com.adriangl.pokeapi_mvvm.network.MoveName
 import com.adriangl.pokeapi_mvvm.network.PokemonMove

@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".pokemonlist.PokemonListActivity">
+        <activity android:name="com.adriangl.pokeapi_mvvm.ui.pokemonlist.PokemonListActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

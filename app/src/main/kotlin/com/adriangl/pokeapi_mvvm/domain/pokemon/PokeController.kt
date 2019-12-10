@@ -1,8 +1,7 @@
-package com.adriangl.pokeapi_mvvm.pokemon
+package com.adriangl.pokeapi_mvvm.domain.pokemon
 
 import com.adriangl.pokeapi_mvvm.network.PokeApi
 import com.adriangl.pokeapi_mvvm.network.Pokemon
-import com.adriangl.pokeapi_mvvm.pokemonlist.PokemonDetailsListLoadedAction
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
