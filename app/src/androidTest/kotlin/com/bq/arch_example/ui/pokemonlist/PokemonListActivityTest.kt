@@ -2,11 +2,9 @@ package com.bq.arch_example.ui.pokemonlist
 
 import android.content.Intent
 import android.view.View
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.adriangl.pokeapi_mvvm.R
-import com.bq.arch_example.app
-import com.bq.arch_example.fixtures.MoveFixtures
-import com.bq.arch_example.utils.test.testActivity
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.agoda.kakao.common.views.KView
 import com.agoda.kakao.image.KImageView
 import com.agoda.kakao.recycler.KRecyclerItem
@@ -14,6 +12,10 @@ import com.agoda.kakao.recycler.KRecyclerView
 import com.agoda.kakao.screen.Screen
 import com.agoda.kakao.screen.Screen.Companion.onScreen
 import com.agoda.kakao.text.KTextView
+import com.bq.arch_example.R
+import com.bq.arch_example.app
+import com.bq.arch_example.fixtures.MoveFixtures
+import com.bq.arch_example.utils.test.testActivity
 import mini.Resource
 import mini.kodein.android.bindViewModel
 import mini.testing.TestDispatcherRule
@@ -22,8 +24,11 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.RuleChain
+import org.junit.runner.RunWith
 import org.kodein.di.direct
 import org.kodein.di.generic.instance
+import org.mockito.Mockito
+import org.mockito.Mockito.mock
 
 class PokemonListScreen : Screen<PokemonListScreen>() {
     val loadingView = KView { withId(R.id.list_loading) }
@@ -48,6 +53,7 @@ class PokemonListScreen : Screen<PokemonListScreen>() {
     }
 }
 
+@RunWith(AndroidJUnit4::class)
 class PokemonListActivityTest : MoveFixtures {
     val testActivityRule = testActivity(clazz = PokemonListActivity::class, launchActivity = false)
     val testDispatcherRule = TestDispatcherRule { app.kodein.direct.instance() }
@@ -57,16 +63,22 @@ class PokemonListActivityTest : MoveFixtures {
         .outerRule(testDispatcherRule)
         .around(testActivityRule)
 
+    private lateinit var liveData: MutableLiveData<PokemonListViewData>
+
     @Before
     fun setup() {
+        val viewModel = mock(PokemonListViewModel::class.java)
+        liveData = MutableLiveData()
+
+        Mockito.`when`(viewModel.getPokemonListLiveData()).thenReturn(liveData)
+
         app.clearTestModule()
+
+        injectTestDependencies(viewModel)
     }
 
     @Test
     fun validate_list_size() {
-        val viewModel = PokemonListViewModel(app)
-        injectTestDependencies(viewModel)
-
         val itemList = listOf(
             PokemonListItem(
                 "Agumon",
@@ -78,7 +90,7 @@ class PokemonListActivityTest : MoveFixtures {
 
         testActivityRule.launchActivity(Intent())
 
-        viewModel.getPokemonMutableLiveData().postValue(
+        liveData.postValue(
             PokemonListViewData(
                 Resource.success(itemList)
             )
@@ -107,9 +119,6 @@ class PokemonListActivityTest : MoveFixtures {
 
     @Test
     fun validate_list_size_2() {
-        val viewModel = PokemonListViewModel(app)
-        injectTestDependencies(viewModel)
-
         val itemList = listOf(
             PokemonListItem(
                 "Jibanyan",
@@ -129,7 +138,7 @@ class PokemonListActivityTest : MoveFixtures {
 
         // We have to use postValue instead of setValue because we can't set a value when there's
         // no available observers
-        viewModel.getPokemonMutableLiveData().postValue(PokemonListViewData(Resource.success(itemList)))
+        liveData.postValue(PokemonListViewData(Resource.success(itemList)))
 
         onScreen<PokemonListScreen> {
             loadingView.isNotDisplayed()

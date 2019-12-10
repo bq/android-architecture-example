@@ -1,7 +1,5 @@
 package com.bq.arch_example.ui.pokemonlist
 
-import android.app.Application
-import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.bq.arch_example.domain.moves.LoadMovesAction
@@ -14,23 +12,19 @@ import com.bq.arch_example.domain.pokemon.PokeStore
 import com.bq.arch_example.network.MoveName
 import com.bq.arch_example.network.Pokemon
 import com.bq.arch_example.network.PokemonMove
+import com.bq.arch_example.test.OpenForTesting
 import com.bq.arch_example.utils.EmptyConfigurable
 import com.bq.arch_example.utils.extensions.valuesList
 import mini.*
-import mini.rx.android.viewmodels.RxAndroidViewModel
+import mini.rx.android.viewmodels.RxViewModel
 import mini.rx.flowable
 import mini.rx.mergeStates
 import mini.rx.select
-import org.kodein.di.KodeinAware
-import org.kodein.di.android.x.closestKodein
-import org.kodein.di.generic.instance
 
-class PokemonListViewModel(app: Application) : RxAndroidViewModel(app), KodeinAware, EmptyConfigurable {
-    override val kodein by closestKodein()
-
-    private val pokeStore: PokeStore by instance()
-    private val movesStore: MovesStore by instance()
-    private val dispatcher: Dispatcher by instance()
+@OpenForTesting
+class PokemonListViewModel(private val pokeStore: PokeStore,
+                           private val movesStore: MovesStore,
+                           private val dispatcher: Dispatcher) : RxViewModel(), EmptyConfigurable {
 
     private val pokemonListLiveData = MutableLiveData<PokemonListViewData>()
 
@@ -63,10 +57,6 @@ class PokemonListViewModel(app: Application) : RxAndroidViewModel(app), KodeinAw
     }
 
     fun getPokemonListLiveData(): LiveData<PokemonListViewData> = pokemonListLiveData
-
-
-    @VisibleForTesting
-    fun getPokemonMutableLiveData() = pokemonListLiveData
 
     fun getPokemonDetails() {
         if (pokeStore.state.pokemonList == null) {

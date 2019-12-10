@@ -1,8 +1,7 @@
-package com.adriangl.pokeapi_mvvm
+package com.bq.arch_example
 
+import org.junit.Assert.assertEquals
 import org.junit.Test
-
-import org.junit.Assert.*
 
 /**
  * Example local unit test, which will execute on the development machine (host).

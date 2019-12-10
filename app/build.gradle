@@ -5,10 +5,11 @@ apply plugin: "kotlin-android-extensions"
 apply plugin: "kotlin-kapt"
 
 apply plugin: "de.mannodermaus.android-junit5"
+apply plugin: 'kotlin-allopen'
 
 android {
     compileSdkVersion 29
-    buildToolsVersion "29.0.1"
+    buildToolsVersion "29.0.2"
     defaultConfig {
         applicationId "com.bq.arch_example"
         minSdkVersion 21
@@ -55,17 +56,16 @@ dependencies {
     implementation "org.kodein.di:kodein-di-framework-android-x:$kodein_version"
     implementation "org.kodein.di:kodein-di-conf-jvm:$kodein_version"
 
-    def mini_version = "3ad61b1049"
+    def mini_version = "1.0.7"
     implementation "com.github.bq.mini-kotlin:mini-android:$mini_version"
     implementation "com.github.bq.mini-kotlin:mini-rx2:$mini_version"
     implementation "com.github.bq.mini-kotlin:mini-rx2-android:$mini_version"
     implementation "com.github.bq.mini-kotlin:mini-kodein:$mini_version"
     implementation "com.github.bq.mini-kotlin:mini-kodein-android:$mini_version"
-    androidTestImplementation "com.github.bq.mini-kotlin:mini-testing:$mini_version"
     kapt "com.github.bq.mini-kotlin:mini-processor:$mini_version"
 
     implementation 'com.google.android.material:material:1.0.0'
-    implementation "androidx.recyclerview:recyclerview:1.1.0-beta04"
+    implementation "androidx.recyclerview:recyclerview:1.1.0"
 
     def retrofit_version = "2.6.1"
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
@@ -92,7 +92,13 @@ dependencies {
 
     implementation "io.coil-kt:coil:0.7.0"
 
-    def espresso_version = "3.2.0"
+    testImplementation 'junit:junit:4.12'
+
+    //Using jUnit5 in unit tests
+    def junit_jupiter_version = '5.5.2'
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_jupiter_version"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_jupiter_version"
+
     def spek_version = "1.1.5"
     // Add the dependencies on spek & its required co-dependencies to the test scope
     testImplementation("org.jetbrains.spek:spek-api:$spek_version") {
@@ -103,25 +109,31 @@ dependencies {
         exclude group: "org.jetbrains.kotlin"
     }
     testImplementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-    testImplementation 'org.mockito:mockito-core:2.23.0'
+
+    def mockito_version = "2.28.2"
+    testImplementation "org.mockito:mockito-core:$mockito_version"
     testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.1.0"
 
-    //Using jUnit5 in unit tests
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.4.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.4.0'
+    androidTestImplementation "com.github.bq.mini-kotlin:mini-testing:$mini_version"
 
+    androidTestImplementation "androidx.test.ext:junit:1.1.1"
     androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
-
     androidTestImplementation 'androidx.test:runner:1.2.0'
-    androidTestImplementation 'com.agoda.kakao:kakao:2.1.0'
+
+    androidTestImplementation "org.mockito:mockito-android:$mockito_version"
+
+    androidTestImplementation 'com.agoda.kakao:kakao:2.2.0'
+
+    def espresso_version = "3.2.0"
     androidTestImplementation("androidx.test.espresso:espresso-core:$espresso_version", {
         exclude group: "androidx.annotation", module: "annotation"
     })
     androidTestImplementation "androidx.test.espresso:espresso-contrib:$espresso_version"
     androidTestImplementation "androidx.test.espresso:espresso-intents:$espresso_version"
     androidTestImplementation "androidx.test.espresso:espresso-web:$espresso_version"
+}
 
-    //Using jUnit5 in unit tests
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.4.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.4.0'
+allOpen {
+    // allows mocking for classes w/o directly opening them for release builds
+    annotation 'com.bq.arch_example.test.OpenClass'
 }

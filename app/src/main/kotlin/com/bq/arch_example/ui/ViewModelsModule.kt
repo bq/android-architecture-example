@@ -7,6 +7,6 @@ import org.kodein.di.generic.instance
 
 object ViewModelsModule {
     fun create() = Kodein.Module("viewModels") {
-        bindViewModel { PokemonListViewModel(instance()) }
+        bindViewModel { PokemonListViewModel(instance(), instance(), instance()) }
     }
 }
