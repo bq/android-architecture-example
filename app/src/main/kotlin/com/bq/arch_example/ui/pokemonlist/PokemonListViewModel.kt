@@ -26,7 +26,7 @@ class PokemonListViewModel(private val pokeStore: PokeStore,
                            private val movesStore: MovesStore,
                            private val dispatcher: Dispatcher) : RxViewModel(), EmptyConfigurable {
 
-    private val pokemonListLiveData = MutableLiveData<PokemonListViewData>()
+    private val pokemonListLiveData = MutableLiveData<Resource<PokemonListViewData>>()
 
     override fun setup() {
         mergeStates<Any> {
@@ -56,7 +56,7 @@ class PokemonListViewModel(private val pokeStore: PokeStore,
         }
     }
 
-    fun getPokemonListLiveData(): LiveData<PokemonListViewData> = pokemonListLiveData
+    fun getPokemonListLiveData(): LiveData<Resource<PokemonListViewData>> = pokemonListLiveData
 
     fun getPokemonDetails() {
         if (pokeStore.state.pokemonList == null) {
@@ -91,10 +91,10 @@ data class PokemonListItem(
     }
 }
 
-data class PokemonListViewData(val pokemonListRes: Resource<List<PokemonListItem>>) {
+data class PokemonListViewData(val pokemonList: List<PokemonListItem>) {
 
     companion object {
-        fun from(pokeState: PokeState, movesState: MovesState): PokemonListViewData {
+        fun from(pokeState: PokeState, movesState: MovesState): Resource<PokemonListViewData> {
             val pokemonListTasks = listOf(pokeState.pokemonListTask)
             val movesListTasks = movesState.movesTaskMap.valuesList().let { if (it.isEmpty()) listOf(Task.idle()) else it }
             val taskList = pokemonListTasks + movesListTasks
@@ -110,13 +110,13 @@ data class PokemonListViewData(val pokemonListRes: Resource<List<PokemonListItem
                             PokemonListItem.from(pokemon, moveList)
                         }
 
-                    PokemonListViewData(Resource.success(pokemonWithMovements))
+                    Resource.success(PokemonListViewData(pokemonWithMovements))
                 }
                 taskList.anyFailure() -> {
-                    PokemonListViewData(Resource.failure())
+                    Resource.failure()
                 }
                 else -> {
-                    PokemonListViewData(Resource.loading())
+                    Resource.loading()
                 }
             }
         }

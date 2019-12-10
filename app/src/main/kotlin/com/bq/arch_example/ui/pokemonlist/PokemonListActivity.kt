@@ -47,10 +47,10 @@ class PokemonListActivity : AppCompatActivity(), KodeinAware {
 
         pokemonListViewModel.setup()
 
-        pokemonListViewModel.getPokemonListLiveData().observe(this) { viewData ->
-            toggleViewsVisibility(viewData.pokemonListRes, list_content, list_loading, error, View.GONE)
+        pokemonListViewModel.getPokemonListLiveData().observe(this) { resource ->
+            toggleViewsVisibility(resource, list_content, list_loading, error, View.GONE)
 
-            viewData.pokemonListRes.onSuccess { list -> pokemonListAdapter.list = list }
+            resource.onSuccess { viewData -> pokemonListAdapter.list = viewData.pokemonList }
                 .onFailure {
                     Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show()
                 }

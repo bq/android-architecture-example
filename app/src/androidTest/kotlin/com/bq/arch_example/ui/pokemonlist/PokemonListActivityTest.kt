@@ -63,7 +63,7 @@ class PokemonListActivityTest : MoveFixtures {
         .outerRule(testDispatcherRule)
         .around(testActivityRule)
 
-    private lateinit var liveData: MutableLiveData<PokemonListViewData>
+    private lateinit var liveData: MutableLiveData<Resource<PokemonListViewData>>
 
     @Before
     fun setup() {
@@ -75,6 +75,8 @@ class PokemonListActivityTest : MoveFixtures {
         app.clearTestModule()
 
         injectTestDependencies(viewModel)
+
+        testActivityRule.launchActivity(Intent())
     }
 
     @Test
@@ -88,13 +90,9 @@ class PokemonListActivityTest : MoveFixtures {
             )
         )
 
-        testActivityRule.launchActivity(Intent())
-
-        liveData.postValue(
-            PokemonListViewData(
-                Resource.success(itemList)
-            )
-        )
+        // We have to use postValue instead of setValue because we can't set a value when there's
+        // no available observers
+        liveData.postValue(Resource.success(PokemonListViewData(itemList)))
 
         onScreen<PokemonListScreen> {
             loadingView.isNotDisplayed()
@@ -134,11 +132,7 @@ class PokemonListActivityTest : MoveFixtures {
             )
         )
 
-        testActivityRule.launchActivity(Intent())
-
-        // We have to use postValue instead of setValue because we can't set a value when there's
-        // no available observers
-        liveData.postValue(PokemonListViewData(Resource.success(itemList)))
+        liveData.postValue(Resource.success(PokemonListViewData(itemList)))
 
         onScreen<PokemonListScreen> {
             loadingView.isNotDisplayed()
