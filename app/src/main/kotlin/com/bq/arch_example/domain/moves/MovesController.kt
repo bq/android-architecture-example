@@ -1,6 +1,7 @@
 package com.bq.arch_example.domain.moves
 
-import com.bq.arch_example.network.MoveName
+import com.bq.arch_example.network.common.MoveName
+import com.bq.arch_example.network.moves.MovesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import mini.Dispatcher

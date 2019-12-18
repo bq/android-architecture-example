@@ -1,7 +1,7 @@
 package com.bq.arch_example.domain.pokemon
 
-import com.bq.arch_example.network.PokeApi
-import com.bq.arch_example.network.Pokemon
+import com.bq.arch_example.network.pokemon.PokeApi
+import com.bq.arch_example.network.common.Pokemon
 import com.bq.arch_example.ui.pokemonlist.PokemonListItem
 import mini.Reducer
 import mini.Store

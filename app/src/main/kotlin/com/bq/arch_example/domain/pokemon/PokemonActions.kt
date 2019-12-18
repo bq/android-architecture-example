@@ -1,6 +1,6 @@
 package com.bq.arch_example.domain.pokemon
 
-import com.bq.arch_example.network.Pokemon
+import com.bq.arch_example.network.common.Pokemon
 import mini.BaseAction
 import mini.Task
 

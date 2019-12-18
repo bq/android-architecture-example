@@ -1,7 +1,7 @@
-package com.bq.arch_example.domain.moves
+package com.bq.arch_example.network.moves
 
-import com.bq.arch_example.network.MoveName
-import com.bq.arch_example.network.PokemonMove
+import com.bq.arch_example.network.common.MoveName
+import com.bq.arch_example.network.common.PokemonMove
 import retrofit2.http.GET
 import retrofit2.http.Path
 

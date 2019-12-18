@@ -1,7 +1,8 @@
 package com.bq.arch_example.domain.moves
 
-import com.bq.arch_example.network.MoveName
-import com.bq.arch_example.network.PokemonMove
+import com.bq.arch_example.network.common.MoveName
+import com.bq.arch_example.network.common.PokemonMove
+import com.bq.arch_example.network.moves.MovesApi
 import com.bq.arch_example.utils.extensions.replace
 import com.bq.arch_example.utils.extensions.replaceIfNotNull
 import mini.Reducer

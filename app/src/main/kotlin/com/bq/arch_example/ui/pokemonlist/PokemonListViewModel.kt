@@ -9,9 +9,9 @@ import com.bq.arch_example.domain.pokemon.FilterPokemonListAction
 import com.bq.arch_example.domain.pokemon.GetPokemonDetailsListAction
 import com.bq.arch_example.domain.pokemon.PokeState
 import com.bq.arch_example.domain.pokemon.PokeStore
-import com.bq.arch_example.network.MoveName
-import com.bq.arch_example.network.Pokemon
-import com.bq.arch_example.network.PokemonMove
+import com.bq.arch_example.network.common.MoveName
+import com.bq.arch_example.network.common.Pokemon
+import com.bq.arch_example.network.common.PokemonMove
 import com.bq.arch_example.test.OpenForTesting
 import com.bq.arch_example.utils.EmptyConfigurable
 import com.bq.arch_example.utils.extensions.valuesList

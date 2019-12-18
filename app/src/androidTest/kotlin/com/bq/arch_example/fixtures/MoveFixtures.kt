@@ -1,9 +1,9 @@
 package com.bq.arch_example.fixtures
 
-import com.bq.arch_example.network.Generation
-import com.bq.arch_example.network.MoveType
-import com.bq.arch_example.network.PokemonMove
-import com.bq.arch_example.network.Target
+import com.bq.arch_example.network.common.Generation
+import com.bq.arch_example.network.common.MoveType
+import com.bq.arch_example.network.common.PokemonMove
+import com.bq.arch_example.network.common.Target
 
 
 interface MoveFixtures {

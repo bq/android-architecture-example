@@ -1,4 +1,4 @@
-package com.bq.arch_example.network
+package com.bq.arch_example.network.common
 
 interface ResourceSummary {
     val id: Int

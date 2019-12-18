@@ -1,5 +1,7 @@
-package com.bq.arch_example.network
+package com.bq.arch_example.network.pokemon
 
+import com.bq.arch_example.network.common.Pokemon
+import com.bq.arch_example.network.common.ResourceList
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query

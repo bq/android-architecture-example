@@ -1,4 +1,4 @@
-package com.bq.arch_example.network
+package com.bq.arch_example.network.common
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
