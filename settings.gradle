@@ -1,2 +1,2 @@
 include ':app'
-rootProject.name='PokeMiniMVVM'
+rootProject.name='android-architecture-example'
