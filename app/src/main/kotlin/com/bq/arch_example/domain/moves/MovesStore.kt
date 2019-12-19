@@ -52,12 +52,7 @@ class MovesStore(private val movesController: MovesController) : Store<MovesStat
 object MovesModule {
     fun create() = Kodein.Module("movesModule") {
         bindStore { MovesStore(instance()) }
-        bind<MovesController>() with singleton {
-            MovesControllerImpl(
-                instance(),
-                instance()
-            )
-        }
+        bind<MovesController>() with singleton { MovesControllerImpl(instance(), instance()) }
         bind<MovesApi>() with singleton {
             val retrofit: Retrofit = instance()
             retrofit.create(MovesApi::class.java)

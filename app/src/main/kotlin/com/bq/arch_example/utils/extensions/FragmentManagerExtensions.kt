@@ -1,4 +1,4 @@
-package com.bq.arch_example.utils.fragment
+package com.bq.arch_example.utils.extensions
 
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction

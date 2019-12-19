@@ -1,4 +1,4 @@
-package com.bq.arch_example.utils.fragment
+package com.bq.arch_example.utils.extensions
 
 import android.view.View
 import android.widget.Toast

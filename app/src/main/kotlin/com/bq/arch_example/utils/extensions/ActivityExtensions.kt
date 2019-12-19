@@ -1,4 +1,4 @@
-package com.bq.arch_example.utils.activity
+package com.bq.arch_example.utils.extensions
 
 import android.app.Activity
 import android.content.Intent

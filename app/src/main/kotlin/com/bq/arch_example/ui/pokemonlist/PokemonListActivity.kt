@@ -7,12 +7,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bq.arch_example.R
-import com.bq.arch_example.utils.observe
+import com.bq.arch_example.utils.extensions.observeResource
 import com.mini.android.toggleViewsVisibility
 import kotlinx.android.synthetic.main.pokemonlist_activity.*
 import mini.kodein.android.viewModel
-import mini.onFailure
-import mini.onSuccess
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
@@ -47,13 +45,16 @@ class PokemonListActivity : AppCompatActivity(), KodeinAware {
 
         pokemonListViewModel.setup()
 
-        pokemonListViewModel.getPokemonListLiveData().observe(this) { resource ->
-            toggleViewsVisibility(resource, list_content, list_loading, error, View.GONE)
-
-            resource.onSuccess { viewData -> pokemonListAdapter.list = viewData.pokemonList }
-                .onFailure {
-                    Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show()
-                }
-        }
+        pokemonListViewModel.getPokemonListLiveData().observeResource(this,
+            onChanged = {
+                toggleViewsVisibility(it, list_content, list_loading, error, View.GONE)
+            },
+            onSuccess = { viewData ->
+                pokemonListAdapter.list = viewData.pokemonList
+            },
+            onFailure = {
+                Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show()
+            }
+        )
     }
 }

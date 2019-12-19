@@ -10,8 +10,8 @@ import androidx.annotation.RestrictTo
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.bq.arch_example.R
-import com.bq.arch_example.utils.activity.argument
-import com.bq.arch_example.utils.fragment.performTransaction
+import com.bq.arch_example.utils.extensions.argument
+import com.bq.arch_example.utils.extensions.performTransaction
 import kotlin.reflect.KClass
 
 /**

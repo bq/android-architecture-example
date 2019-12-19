@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.annotation.RestrictTo
 import androidx.fragment.app.Fragment
-import com.bq.arch_example.utils.fragment.argument
+import com.bq.arch_example.utils.extensions.argument
 
 /**
  * Fragment used to inflate a layout to test.
