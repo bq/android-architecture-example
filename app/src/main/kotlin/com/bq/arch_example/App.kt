@@ -75,7 +75,7 @@ class App : Application(), KodeinAware {
         dispatcher = kodein.direct.instance()
 
         // Initialize Mini
-        storeSubscriptions = MiniGen.subscribe(dispatcher, stores.toList())
+        storeSubscriptions = MiniGen.subscribe(dispatcher, stores)
         stores.forEach { store ->
             store.initialize()
         }
