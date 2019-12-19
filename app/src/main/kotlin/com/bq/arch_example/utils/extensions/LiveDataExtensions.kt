@@ -12,7 +12,7 @@ import mini.Resource
 inline fun <T> LiveData<T>.observe(owner: LifecycleOwner, crossinline cb: (T) -> Unit) = observe(owner, Observer { cb(it) })
 
 /**
- * Observes a given the [LiveData] only once.
+ * Observes a given [LiveData] only once.
  */
 inline fun <T> LiveData<T>.observeOnce(owner: LifecycleOwner, crossinline cb: (T) -> Unit) =
     observe(owner, object : Observer<T> {
