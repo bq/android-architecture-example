@@ -50,7 +50,7 @@ class MovesStore(private val movesController: MovesController) : Store<MovesStat
 }
 
 object MovesModule {
-    fun create() = Kodein.Module("movesStore") {
+    fun create() = Kodein.Module("movesModule") {
         bindStore { MovesStore(instance()) }
         bind<MovesController>() with singleton {
             MovesControllerImpl(
